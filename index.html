@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#DFE5DC" />
+  <meta name="description" content="HALO 随行除烟味植物香氛梳 — 十秒轻梳轻拂，淡化发丝与衣领残留烟味。适配烟盒与手机壳的可调弹簧侧夹。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="HALO — 随行除烟味植物香氛梳" />
+  <meta property="og:description" content="专为发丝与衣物残留烟味打造的随行伸缩香氛梳。四款干爽植物茶木香调，十秒回归亲近社交。" />
+  <meta property="og:image" content="./assets/hero-comb.jpg" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' fill='%23F4F7F4' stroke='%2324382C' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='10' fill='%2324382C'/%3E%3C/svg%3E" />
+  <title>HALO — 随行除烟味植物香氛梳</title>
+  <!-- China-accessible editorial font mirror: Jost (Futura-inspired geometric) + Pinyon Script (Copperplate) + Noto Serif SC/JP/KR + Noto Sans SC/JP/KR + IBM Plex Mono -->
+  <link rel="stylesheet" href="https://fonts.loli.net/css2?family=IBM+Plex+Mono:wght@400;500&family=Jost:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&family=Noto+Serif+JP:wght@300;400;500&family=Noto+Serif+KR:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;500;600&family=Pinyon+Script&display=swap" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <!-- ======================= Top Announcement Strip ======================= -->
+  <div class="announcement-bar" data-i18n="announcement">
+    双支套装（满 ¥128）享免邮礼遇 · 深圳南山周末体验空间预约开放中
+  </div>
+
+  <!-- ======================= Le Labo-Style Two-Tier Hairline Header ======================= -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-shell">
+      <a href="#/" class="brand-cell" data-route="/" aria-label="HALO Home">
+        <span class="brand-wordmark">HALO</span>
+        <span class="brand-sub">SHENZHEN — BOTANICAL CARE</span>
+      </a>
+
+      <div class="header-right">
+        <div class="header-top-row">
+          <div class="header-note-cell">
+            <span>HALO LAB · POST-SMOKING HAIR &amp; FABRIC CARE</span>
+          </div>
+
+          <div class="lang-cell" id="langMenuWrap">
+            <button type="button" class="lang-trigger" id="langTriggerBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="langDropdown">
+              LANGUAGE
+            </button>
+            <div class="lang-dropdown" id="langDropdown" role="listbox" aria-label="Language">
+              <button type="button" class="lang-option is-active" data-lang="zh" role="option" aria-selected="true">
+                <span>简体中文</span>
+                <span class="lang-code">ZH</span>
+              </button>
+              <button type="button" class="lang-option" data-lang="en" role="option" aria-selected="false">
+                <span>English</span>
+                <span class="lang-code">EN</span>
+              </button>
+              <button type="button" class="lang-option" data-lang="ja" role="option" aria-selected="false">
+                <span>日本語</span>
+                <span class="lang-code">JA</span>
+              </button>
+              <button type="button" class="lang-option" data-lang="ko" role="option" aria-selected="false">
+                <span>한국어</span>
+                <span class="lang-code">KO</span>
+              </button>
+            </div>
+          </div>
+
+          <button type="button" class="bag-cell" id="openBagBtn" aria-label="Open shopping bag">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true">
+              <path d="M6 2L3 6v15h18V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span class="bag-count" id="bagCountBadge">0</span>
+          </button>
+
+          <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu" aria-expanded="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square">
+              <line x1="3" y1="7" x2="21" y2="7"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="17" x2="21" y2="17"></line>
+            </svg>
+          </button>
+        </div>
+
+        <nav class="header-nav-row" aria-label="Primary Navigation">
+          <a href="#/comb" data-route="/comb" data-i18n="nav.comb">产品定制</a>
+          <a href="#/scents" data-route="/scents" data-i18n="nav.scents">植物香调</a>
+          <a href="#/about" data-route="/about" data-i18n="nav.manifesto">品牌宣言</a>
+          <a href="#/popup" data-route="/popup" data-i18n="nav.popup">深圳快闪</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Navigation -->
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile Navigation">
+    <a href="#/" data-route="/" data-i18n="nav.home">首页</a>
+    <a href="#/comb" data-route="/comb" data-i18n="nav.comb">产品定制</a>
+    <a href="#/scents" data-route="/scents" data-i18n="nav.scents">植物香调</a>
+    <a href="#/about" data-route="/about" data-i18n="nav.manifesto">品牌宣言</a>
+    <a href="#/popup" data-route="/popup" data-i18n="nav.popup">深圳快闪</a>
+  </nav>
+
+  <!-- ======================= Multi-Page View Router Container ======================= -->
+  <main class="page-root" id="pageRoot">
+
+    <!-- ==================== VIEW 1: HOMEPAGE (#/) — Pure Full-Bleed Stage Only ==================== -->
+    <section class="page-view is-active" id="view-home" data-page="/">
+      <div class="hero-stage">
+        <div class="hero-media" id="heroMedia">
+          <img class="hero-bg-layer hero-bg-default is-visible" data-hero-bg="default" src="./assets/hero-comb.jpg" alt="HALO Scent Comb — Pocket Smoke-Odor Botanical Grooming" />
+          <img class="hero-bg-layer hero-bg-paint" data-hero-bg="0" src="./assets/hero-paint-matcha-cedar.jpg" alt="Matcha Cedar botanical oil painting" />
+          <img class="hero-bg-layer hero-bg-paint" data-hero-bg="1" src="./assets/hero-paint-hinoki-rain.jpg" alt="Hinoki Rain botanical oil painting" />
+          <img class="hero-bg-layer hero-bg-paint" data-hero-bg="2" src="./assets/hero-paint-white-linen.jpg" alt="White Linen botanical oil painting" />
+          <img class="hero-bg-layer hero-bg-paint" data-hero-bg="3" src="./assets/hero-paint-yuzu-vetiver.jpg" alt="Yuzu Vetiver botanical oil painting" />
+          <div class="hero-mist-veil" id="heroMistVeil" aria-hidden="true"></div>
+          <div class="hero-scrim" aria-hidden="true"></div>
+        </div>
+
+        <div class="hero-curtain-wrap">
+          <div class="hero-curtain" id="heroCurtain">
+            <!-- 4 interactive Le Labo-style navigation columns rendered by app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: PRODUCT & DIY PAGE (#/comb) ==================== -->
+    <section class="page-view" id="view-comb" data-page="/comb">
+      <div class="paper-canvas">
+        <div class="paper-sheet">
+          <div class="sheet-section pdp-section">
+            <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+              <a href="#/" data-route="/" data-i18n="nav.home">首页</a>
+              <span class="crumb-sep">/</span>
+              <span data-i18n="pdp.crumbCategory">随行个护</span>
+              <span class="crumb-sep">/</span>
+              <span class="crumb-current" data-i18n="pdp.title">HALO SCENT COMB</span>
+            </nav>
+
+            <div class="pdp-grid">
+              <!-- Left: Vertical Thumbnail Rail + Quiet Uncluttered Stage -->
+              <div class="pdp-media-col">
+                <div class="pdp-gallery">
+                  <div class="pdp-thumbs" id="pdpThumbs" role="tablist" aria-label="Product views"></div>
+
+                  <div class="pdp-stage-wrap">
+                    <div class="pdp-main-stage" id="pdpMainStage"></div>
+                    <div class="pdp-under-links">
+                      <span class="under-label" data-i18n="pdp.viewLabel">查看实物：</span>
+                      <button type="button" class="under-link is-active" id="viewFrontBtn" data-i18n="pdp.viewFront">当前配色实物</button>
+                      <span class="under-sep">·</span>
+                      <button type="button" class="under-link" id="viewClipBtn" data-i18n="pdp.viewClip">弹簧侧夹结构</button>
+                      <span class="under-sep">·</span>
+                      <button type="button" class="under-link" id="viewFabricBtn" data-i18n="pdp.viewFabric">翻转拂衣示意</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Exact Le Labo 1px Hairline Form Stack -->
+              <div class="pdp-info-col">
+                <div class="pdp-head">
+                  <div>
+                    <h1 class="pdp-title" data-i18n="pdp.title">HALO SCENT COMB</h1>
+                    <div class="pdp-subtitle" data-i18n="pdp.subtitle">发丝与衣物除烟味随行梳 · 含可调弹簧侧夹</div>
+                  </div>
+                  <div class="pdp-price-block">
+                    <div class="pdp-price" id="pdpTotalPrice">¥78</div>
+                    <div class="pdp-price-note" data-i18n="pdp.priceNote">CNY · 单支 ¥78 · 双支套装 ¥128</div>
+                  </div>
+                </div>
+
+                <!-- 1px Horizontal Specification Ledger -->
+                <div class="pdp-ledger">
+                  <div class="ledger-row">
+                    <label class="ledger-key" for="editionSelect" data-i18n="pdp.rowEdition">规格：</label>
+                    <div class="ledger-val">
+                      <select id="editionSelect" class="ledger-select"></select>
+                      <div class="ledger-hint" id="editionHint"></div>
+                    </div>
+                  </div>
+
+                  <div class="ledger-row">
+                    <span class="ledger-key" data-i18n="pdp.rowColor">配色：</span>
+                    <div class="ledger-val">
+                      <div class="ledger-swatches" id="colorSwatchRow"></div>
+                      <div class="ledger-hint" id="activeColorName"></div>
+                    </div>
+                  </div>
+
+                  <div class="ledger-row">
+                    <label class="ledger-key" for="scentSelect" data-i18n="pdp.rowScent">香调：</label>
+                    <div class="ledger-val">
+                      <select id="scentSelect" class="ledger-select"></select>
+                      <div class="ledger-hint" id="scentMoodHint"></div>
+                    </div>
+                  </div>
+
+                  <div class="ledger-row" id="duoSecondRow" style="display: none;">
+                    <label class="ledger-key" for="duoSecondSelect" data-i18n="pdp.rowSecondScent">第二支香调：</label>
+                    <div class="ledger-val">
+                      <select id="duoSecondSelect" class="ledger-select"></select>
+                    </div>
+                  </div>
+
+                  <div class="ledger-row">
+                    <span class="ledger-key" data-i18n="pdp.rowQty">数量：</span>
+                    <div class="ledger-val">
+                      <div class="ledger-qty">
+                        <button type="button" id="pdpQtyMinus" aria-label="Decrease">−</button>
+                        <span id="pdpQtyVal">1</span>
+                        <button type="button" id="pdpQtyPlus" aria-label="Increase">+</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Single Solid Conversion CTA -->
+                <button type="button" class="pdp-cta" id="addToBagBtn">
+                  <span data-i18n="pdp.addToBag">加入购物袋</span>
+                  <span class="cta-dash">—</span>
+                  <span id="ctaPriceEcho">¥78</span>
+                </button>
+
+                <!-- Quiet Editorial Story & Scent Notes -->
+                <div class="pdp-story">
+                  <p data-i18n="pdp.storyBody"></p>
+                  <div class="pdp-notes-line" id="pdpNotesLine"></div>
+                </div>
+
+                <!-- Le Labo-Style Hairline Expandable Utility Rows -->
+                <div class="pdp-accordions">
+                  <div class="pdp-acc-item" id="accCraftItem">
+                    <div class="pdp-acc-head">
+                      <span data-i18n="pdp.accCraftTitle">双面除烟味结构与弹簧侧夹</span>
+                      <button type="button" class="under-link" data-acc-toggle="accCraftItem" id="accCraftBtn" data-i18n="pdp.accCraftAction">展开详情</button>
+                    </div>
+                    <div class="pdp-acc-body">
+                      <p data-i18n="pdp.accCraftHair"></p>
+                      <p data-i18n="pdp.accCraftFabric"></p>
+                      <p data-i18n="pdp.accCraftClip"></p>
+                    </div>
+                  </div>
+
+                  <div class="pdp-acc-item" id="accSafetyItem">
+                    <div class="pdp-acc-head">
+                      <span data-i18n="pdp.accSafetyTitle">成分透明、使用边界与日常保养</span>
+                      <button type="button" class="under-link" data-acc-toggle="accSafetyItem" id="accSafetyBtn" data-i18n="pdp.accSafetyAction">展开说明</button>
+                    </div>
+                    <div class="pdp-acc-body" id="accSafetyList"></div>
+                  </div>
+
+                  <div class="pdp-acc-item">
+                    <div class="pdp-acc-head">
+                      <span data-i18n="pdp.accPopupTitle">想先亲手体验十秒净味？</span>
+                      <button type="button" class="under-link" id="pdpRsvpTrigger" data-i18n="pdp.accPopupAction">预约深圳南山快闪试香</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: BOTANICAL SCENTS INDEX (#/scents — 4 Clean Blocks Only) ==================== -->
+    <section class="page-view" id="view-scents" data-page="/scents">
+      <div class="paper-canvas">
+        <div class="paper-sheet">
+          <div class="sheet-section subpage-section">
+            <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+              <a href="#/" data-route="/" data-i18n="nav.home">首页</a>
+              <span class="crumb-sep">/</span>
+              <span class="crumb-current" data-i18n="nav.scents">植物香调</span>
+            </nav>
+
+            <div class="section-head-quiet">
+              <h1 class="quiet-title" data-i18n="scentsSection.title">FOUR BOTANICAL BLENDS</h1>
+              <p class="quiet-sub" data-i18n="scentsSection.subtitle"></p>
+            </div>
+
+            <div class="specimen-list" id="specimenGrid">
+              <!-- 4 clean large color blocks + minimal one-line caption rendered by app.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3B: SCENT DETAIL PAGE (#/scents/:id) ==================== -->
+    <section class="page-view" id="view-scent-detail" data-page="/scents-detail">
+      <!-- Full-bleed Le Labo-style Overhead Botanical Flat-Lay Banner -->
+      <div class="scent-banner" id="scentDetailBanner">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <div class="paper-canvas">
+        <div class="paper-sheet">
+          <div class="sheet-section subpage-section scent-detail-section">
+            <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+              <a href="#/" data-route="/" data-i18n="nav.home">首页</a>
+              <span class="crumb-sep">/</span>
+              <a href="#/scents" data-route="/scents" data-i18n="nav.scents">植物香调</a>
+              <span class="crumb-sep">/</span>
+              <span class="crumb-current" id="scentDetailCrumb">01 · 青茶雪松</span>
+            </nav>
+
+            <div class="scent-detail-grid" id="scentDetailRoot">
+              <!-- Rendered dynamically by app.js -->
+            </div>
+
+            <div class="scent-pager" id="scentPager">
+              <!-- Quick 01 / 02 / 03 / 04 switcher across scents -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: MANIFESTO & MOMENTS PAGE (#/about) ==================== -->
+    <section class="page-view" id="view-about" data-page="/about">
+      <div class="paper-canvas">
+        <div class="paper-sheet">
+          <div class="sheet-section subpage-section">
+            <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+              <a href="#/" data-route="/" data-i18n="nav.home">首页</a>
+              <span class="crumb-sep">/</span>
+              <span class="crumb-current" data-i18n="nav.manifesto">品牌宣言</span>
+            </nav>
+
+            <div class="manifesto-block">
+              <h1 class="quiet-title" data-i18n="manifesto.title">MANIFESTO</h1>
+              <div class="manifesto-lines" id="manifestoLines"></div>
+            </div>
+
+            <div class="about-divider"></div>
+
+            <div class="moments-block">
+              <div class="section-head-quiet">
+                <h2 class="quiet-title" data-i18n="moments.title">EVERYDAY MOMENTS</h2>
+              </div>
+              <div class="moments-grid" id="momentsGrid"></div>
+            </div>
+
+            <div class="about-footer-cta">
+              <a href="#/comb" data-route="/comb" class="pdp-cta pdp-cta--inline" data-i18n="manifesto.cta">探索并定制 HALO</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 5: SHENZHEN POP-UP PAGE (#/popup) ==================== -->
+    <section class="page-view" id="view-popup" data-page="/popup">
+      <div class="paper-canvas">
+        <div class="paper-sheet">
+          <div class="sheet-section subpage-section">
+            <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+              <a href="#/" data-route="/" data-i18n="nav.home">首页</a>
+              <span class="crumb-sep">/</span>
+              <span class="crumb-current" data-i18n="nav.popup">深圳快闪</span>
+            </nav>
+
+            <div class="popup-plate">
+              <img src="./assets/popup-store.jpg" alt="HALO Shenzhen Nanshan Weekend Lab Pop-up" />
+            </div>
+
+            <div class="popup-editorial">
+              <div class="popup-col-left">
+                <h1 class="quiet-title" data-i18n="popup.title">SHENZHEN NANSHAN · WEEKEND LAB</h1>
+                <p class="popup-desc" data-i18n="popup.desc"></p>
+                <p class="popup-hygiene" data-i18n="popup.hygiene"></p>
+              </div>
+
+              <div class="popup-col-right">
+                <div class="popup-ledger">
+                  <div class="popup-row">
+                    <span data-i18n="popup.locLabel">地点</span>
+                    <strong data-i18n="popup.locVal"></strong>
+                  </div>
+                  <div class="popup-row">
+                    <span data-i18n="popup.timeLabel">时间</span>
+                    <strong data-i18n="popup.timeVal"></strong>
+                  </div>
+                  <div class="popup-row">
+                    <span data-i18n="popup.offerLabel">现场礼遇</span>
+                    <strong data-i18n="popup.offerVal"></strong>
+                  </div>
+                </div>
+                <button type="button" class="under-link under-link--prominent" id="openRsvpBtn" data-i18n="popup.rsvpLink">预约 10 秒现场试香</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================= Light Calm Footer (Shared Across All Pages) ======================= -->
+  <footer class="site-footer">
+    <div class="footer-shell">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 data-i18n="footer.colAbout">关于 HALO</h4>
+          <ul>
+            <li><a href="#/" data-route="/" data-i18n="nav.home">首页</a></li>
+            <li><a href="#/comb" data-route="/comb" data-i18n="nav.comb">产品定制</a></li>
+            <li><a href="#/scents" data-route="/scents" data-i18n="nav.scents">植物香调</a></li>
+            <li><a href="#/about" data-route="/about" data-i18n="nav.manifesto">品牌宣言</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-i18n="footer.colCare">客户服务</h4>
+          <ul>
+            <li><a href="#/comb" id="footerSafetyLink" data-i18n="pdp.accSafetyTitle">成分透明与保养</a></li>
+            <li><a href="#/popup" data-route="/popup" data-i18n="nav.popup">深圳快闪</a></li>
+            <li><button type="button" class="footer-text-btn" id="footerRsvpLink" data-i18n="popup.rsvpLink">预约深圳试香</button></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-i18n="footer.colConnect">关注我们</h4>
+          <ul>
+            <li><a href="#/popup" data-route="/popup" data-i18n="footer.socialXhs">小红书 @HALO_Official</a></li>
+            <li><a href="#/popup" data-route="/popup" data-i18n="footer.socialDouyin">抖音 @HALO香氛梳</a></li>
+            <li><a href="#/popup" data-route="/popup" data-i18n="footer.socialIns">Instagram @halo.grooming</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-i18n="footer.colNews">订阅实验室通讯</h4>
+          <form class="footer-news-form" id="newsletterForm">
+            <input type="email" id="newsletterInput" required data-i18n-placeholder="footer.newsPlaceholder" placeholder="输入您的邮箱地址" />
+            <button type="submit" class="under-link" data-i18n="footer.newsBtn">订阅</button>
+          </form>
+          <div class="newsletter-feedback" id="newsletterFeedback"></div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span data-i18n="footer.copyright">© 2026 HALO Botanical Grooming.</span>
+        <span data-i18n="footer.note"></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================= Overlays ======================= -->
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+
+  <!-- Slide-over Shopping Bag Drawer -->
+  <aside class="bag-drawer" id="bagDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <h3 data-i18n="bag.title">购物袋</h3>
+      <button type="button" class="icon-close" id="closeBagBtn" aria-label="Close bag">×</button>
+    </div>
+    <div class="drawer-body" id="bagBody"></div>
+    <div class="drawer-footer" id="bagFooter" style="display: none;">
+      <div class="bag-totals">
+        <div class="bag-totals-row">
+          <span data-i18n="bag.subtotal">小计</span>
+          <strong id="bagSubtotal">¥0</strong>
+        </div>
+        <div class="bag-totals-row">
+          <span data-i18n="bag.shipping">配送费</span>
+          <span id="bagShipping">¥0</span>
+        </div>
+        <div class="bag-totals-row is-total">
+          <span data-i18n="bag.total">合计</span>
+          <span id="bagGrandTotal">¥0</span>
+        </div>
+      </div>
+      <button type="button" class="pdp-cta" id="openCheckoutBtn" data-i18n="bag.checkoutBtn">前往模拟结账</button>
+    </div>
+  </aside>
+
+  <!-- Simulated Checkout Modal -->
+  <div class="modal" id="checkoutModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 data-i18n="checkout.title">模拟订单确认</h3>
+        <button type="button" class="icon-close" data-close-modal aria-label="Close modal">×</button>
+      </div>
+
+      <div id="checkoutFormView">
+        <div class="demo-banner" data-i18n="checkout.notice"></div>
+        <form id="checkoutForm">
+          <div class="form-group">
+            <label data-i18n="checkout.deliveryLabel">配送 / 自提方式</label>
+            <div class="radio-row">
+              <button type="button" class="choice-pill is-selected" data-delivery="ship" data-i18n="checkout.deliveryShip">标准快递配送</button>
+              <button type="button" class="choice-pill" data-delivery="pickup" data-i18n="checkout.deliveryPickup">深圳南山快闪自提</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label data-i18n="checkout.paymentLabel">支付方式</label>
+            <div class="radio-row radio-row--three">
+              <button type="button" class="choice-pill is-selected" data-pay="wechat" data-i18n="checkout.payWechat">微信支付</button>
+              <button type="button" class="choice-pill" data-pay="alipay" data-i18n="checkout.payAlipay">支付宝</button>
+              <button type="button" class="choice-pill" data-pay="card" data-i18n="checkout.payCard">Apple Pay</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="checkoutName" data-i18n="checkout.nameLabel">收件人姓名</label>
+            <input type="text" id="checkoutName" class="form-input" data-i18n-placeholder="checkout.namePlaceholder" required />
+          </div>
+
+          <div class="form-group">
+            <label for="checkoutContact" data-i18n="checkout.contactLabel">联系方式（选填）</label>
+            <input type="text" id="checkoutContact" class="form-input" data-i18n-placeholder="checkout.contactPlaceholder" />
+          </div>
+
+          <div class="checkout-total-row">
+            <span data-i18n="bag.total">合计</span>
+            <strong id="checkoutTotalDisplay">¥0</strong>
+          </div>
+
+          <button type="submit" class="pdp-cta" data-i18n="checkout.confirmBtn">确认提交模拟订单</button>
+        </form>
+      </div>
+
+      <div id="checkoutSuccessView" class="order-receipt" style="display: none;">
+        <div class="receipt-eyebrow" data-i18n="checkout.successEyebrow">ORDER CONFIRMED</div>
+        <h3 class="quiet-title" style="margin-bottom: 10px;" data-i18n="checkout.successTitle"></h3>
+        <div class="receipt-label" data-i18n="checkout.successOrderNo"></div>
+        <div class="receipt-code" id="generatedOrderCode">HALO-2026-8419</div>
+        <p class="receipt-desc" data-i18n="checkout.successDesc"></p>
+        <button type="button" class="pdp-cta" data-close-modal data-i18n="checkout.doneBtn">返回官网</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shenzhen Pop-up RSVP Modal -->
+  <div class="modal" id="rsvpModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 data-i18n="rsvp.title">预约深圳南山快闪试香</h3>
+        <button type="button" class="icon-close" data-close-modal aria-label="Close modal">×</button>
+      </div>
+      <p class="modal-sub" data-i18n="rsvp.subtitle"></p>
+      <form id="rsvpForm">
+        <div class="form-group">
+          <label for="rsvpSlot" data-i18n="rsvp.slotLabel">意向时段</label>
+          <select id="rsvpSlot" class="form-select"></select>
+        </div>
+        <div class="form-group">
+          <label for="rsvpScent" data-i18n="rsvp.scentLabel">最想试闻的香调</label>
+          <select id="rsvpScent" class="form-select"></select>
+        </div>
+        <div class="form-group">
+          <label for="rsvpContact" data-i18n="checkout.contactLabel">联系方式（选填）</label>
+          <input type="text" id="rsvpContact" class="form-input" data-i18n-placeholder="checkout.contactPlaceholder" />
+        </div>
+        <button type="submit" class="pdp-cta" data-i18n="rsvp.submitBtn">确认预约</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./i18n.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
