@@ -100,11 +100,13 @@
   <!-- ======================= Multi-Page View Router Container ======================= -->
   <main class="page-root" id="pageRoot">
 
-    <!-- ==================== VIEW 1: HOMEPAGE (#/) — Pure Full-Bleed Stage Only ==================== -->
+    <!-- ==================== VIEW 1: HOMEPAGE (#/) — Architectural 4-Comb Hero + Mist Oil-Painting Hover ==================== -->
     <section class="page-view is-active" id="view-home" data-page="/">
       <div class="hero-stage">
         <div class="hero-media" id="heroMedia">
-          <img class="hero-bg-layer hero-bg-default is-visible" data-hero-bg="default" src="./assets/hero-comb.jpg" alt="HALO Scent Comb — Pocket Smoke-Odor Botanical Grooming" />
+          <img class="hero-bg-layer hero-bg-default is-visible" data-hero-bg="default" src="./assets/hero-comb.jpg" alt="HALO Scent Comb Collection — Four Botanical Editions" />
+
+          <!-- 4 Widescreen Botanical Oil Paintings (Hover Curtain Mist-Dissolve) -->
           <img class="hero-bg-layer hero-bg-paint" data-hero-bg="0" src="./assets/hero-paint-matcha-cedar.jpg" alt="Matcha Cedar botanical oil painting" />
           <img class="hero-bg-layer hero-bg-paint" data-hero-bg="1" src="./assets/hero-paint-hinoki-rain.jpg" alt="Hinoki Rain botanical oil painting" />
           <img class="hero-bg-layer hero-bg-paint" data-hero-bg="2" src="./assets/hero-paint-white-linen.jpg" alt="White Linen botanical oil painting" />
@@ -144,22 +146,24 @@
                     <div class="pdp-main-stage" id="pdpMainStage"></div>
                     <div class="pdp-under-links">
                       <span class="under-label" data-i18n="pdp.viewLabel">查看实物：</span>
-                      <button type="button" class="under-link is-active" id="viewFrontBtn" data-i18n="pdp.viewFront">当前配色实物</button>
+                      <button type="button" class="under-link is-active" id="viewMainBtn" data-i18n="pdp.viewMain">成品实拍</button>
                       <span class="under-sep">·</span>
-                      <button type="button" class="under-link" id="viewClipBtn" data-i18n="pdp.viewClip">弹簧侧夹结构</button>
+                      <button type="button" class="under-link" id="viewBoxBtn" data-i18n="pdp.viewBox">随行礼盒</button>
                       <span class="under-sep">·</span>
-                      <button type="button" class="under-link" id="viewFabricBtn" data-i18n="pdp.viewFabric">翻转拂衣示意</button>
+                      <button type="button" class="under-link" id="viewDetailBtn" data-i18n="pdp.viewDetail">纹样细节</button>
+                      <span class="under-sep">·</span>
+                      <button type="button" class="under-link" id="viewClipBtn" data-i18n="pdp.viewClip">弹簧侧夹</button>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Right: Exact Le Labo 1px Hairline Form Stack -->
+              <!-- Right: Exact Le Labo 1px Hairline Form Stack (Scent-Bound Fixed Finish) -->
               <div class="pdp-info-col">
                 <div class="pdp-head">
                   <div>
                     <h1 class="pdp-title" data-i18n="pdp.title">HALO SCENT COMB</h1>
-                    <div class="pdp-subtitle" data-i18n="pdp.subtitle">发丝与衣物除烟味随行梳 · 含可调弹簧侧夹</div>
+                    <div class="pdp-subtitle" id="pdpActiveEditionSub">NO. 01 · 青茶雪松 · 雪松纹</div>
                   </div>
                   <div class="pdp-price-block">
                     <div class="pdp-price" id="pdpTotalPrice">¥78</div>
@@ -169,6 +173,14 @@
 
                 <!-- 1px Horizontal Specification Ledger -->
                 <div class="pdp-ledger">
+                  <div class="ledger-row ledger-row--scent">
+                    <span class="ledger-key" data-i18n="pdp.rowScent">香调款式：</span>
+                    <div class="ledger-val">
+                      <div class="scent-edition-grid" id="scentEditionGrid" role="radiogroup" aria-label="Scent and Finish"></div>
+                      <div class="ledger-hint" id="scentFinishHint"></div>
+                    </div>
+                  </div>
+
                   <div class="ledger-row">
                     <label class="ledger-key" for="editionSelect" data-i18n="pdp.rowEdition">规格：</label>
                     <div class="ledger-val">
@@ -177,26 +189,11 @@
                     </div>
                   </div>
 
-                  <div class="ledger-row">
-                    <span class="ledger-key" data-i18n="pdp.rowColor">配色：</span>
-                    <div class="ledger-val">
-                      <div class="ledger-swatches" id="colorSwatchRow"></div>
-                      <div class="ledger-hint" id="activeColorName"></div>
-                    </div>
-                  </div>
-
-                  <div class="ledger-row">
-                    <label class="ledger-key" for="scentSelect" data-i18n="pdp.rowScent">香调：</label>
-                    <div class="ledger-val">
-                      <select id="scentSelect" class="ledger-select"></select>
-                      <div class="ledger-hint" id="scentMoodHint"></div>
-                    </div>
-                  </div>
-
                   <div class="ledger-row" id="duoSecondRow" style="display: none;">
                     <label class="ledger-key" for="duoSecondSelect" data-i18n="pdp.rowSecondScent">第二支香调：</label>
                     <div class="ledger-val">
                       <select id="duoSecondSelect" class="ledger-select"></select>
+                      <div class="duo-second-preview" id="duoSecondPreview"></div>
                     </div>
                   </div>
 
@@ -559,6 +556,23 @@
 
   <!-- Toast Notification -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Homepage Cigarette-Ignited Oil-Canvas Burn Transition Canvas -->
+  <canvas class="hero-burn-canvas" id="heroBurnCanvas" aria-hidden="true"></canvas>
+
+  <!-- Custom Brand Cursor (Desktop Fine-Pointer Only): 2-Frame Vintage Comic Hand (Hold -> Stub-Out) + Live Smoke -->
+  <canvas class="halo-smoke-canvas" id="haloSmokeCanvas" aria-hidden="true"></canvas>
+  <div class="halo-cursor" id="haloCursor" aria-hidden="true">
+    <!-- Frame 1: Palm-up Holding Lit Cigarette (Hotspot pinned at ash tip: 1px, 9px) -->
+    <div class="halo-cursor-rig halo-cursor-hold" id="haloCursorHold">
+      <img class="halo-cursor-img" src="./assets/cursor-cig.png" alt="" width="52" height="52" draggable="false" />
+      <span class="halo-cursor-ember" id="haloCursorEmber"></span>
+    </div>
+    <!-- Frame 2: Palm-down Thumb+Index Stubbing Out Cigarette (Hotspot pinned at crushed butt: 6px, 46px) -->
+    <div class="halo-cursor-rig halo-cursor-stub" id="haloCursorStub">
+      <img class="halo-cursor-img" src="./assets/cursor-cig-stub.png" alt="" width="52" height="52" draggable="false" />
+    </div>
+  </div>
 
   <script src="./i18n.js"></script>
   <script src="./app.js"></script>

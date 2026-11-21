@@ -9,22 +9,26 @@
   const I18N = window.HALO_I18N;
   const VALID_ROUTES = ["/", "/comb", "/scents", "/about", "/popup"];
 
-  const COLORWAYS = {
-    ivoryMatcha: {
-      photo: "./assets/comb-ivory-matcha.jpg",
-      swatchGrad: "linear-gradient(135deg, #EAE2D3 48%, #B4D384 52%)"
+  const SCENT_PRODUCTS = {
+    matchaCedar: {
+      main: "./assets/prod-matcha-cedar-main.jpg",
+      box: "./assets/prod-matcha-cedar-box.jpg",
+      detail: "./assets/prod-matcha-cedar-detail.jpg"
     },
-    oatSage: {
-      photo: "./assets/comb-oat-sage.jpg",
-      swatchGrad: "linear-gradient(135deg, #D6C9B2 48%, #8AA584 52%)"
+    hinokiRain: {
+      main: "./assets/prod-hinoki-rain-main.jpg",
+      box: "./assets/prod-hinoki-rain-box.jpg",
+      detail: "./assets/prod-hinoki-rain-detail.jpg"
     },
-    mistPine: {
-      photo: "./assets/comb-mist-pine.jpg",
-      swatchGrad: "linear-gradient(135deg, #C3CBC6 48%, #5F826F 52%)"
+    whiteLinen: {
+      main: "./assets/prod-white-linen-main.jpg",
+      box: "./assets/prod-white-linen-box.jpg",
+      detail: "./assets/prod-white-linen-detail.jpg"
     },
-    blushTea: {
-      photo: "./assets/comb-blush-tea.jpg",
-      swatchGrad: "linear-gradient(135deg, #E4CFC5 48%, #C7D2B3 52%)"
+    yuzuVetiver: {
+      main: "./assets/prod-yuzu-vetiver-main.jpg",
+      box: "./assets/prod-yuzu-vetiver-box.jpg",
+      detail: "./assets/prod-yuzu-vetiver-detail.jpg"
     }
   };
 
@@ -98,7 +102,6 @@
   ];
 
   const EDITION_KEYS = ["single", "duo"];
-  const COLOR_KEYS = ["ivoryMatcha", "oatSage", "mistPine", "blushTea"];
   const SCENT_KEYS = ["matchaCedar", "hinokiRain", "whiteLinen", "yuzuVetiver"];
 
   /* ---------- State ---------- */
@@ -107,17 +110,16 @@
     route: "/",
     activeScentDetail: "matchaCedar",
     heroActiveIdx: 0,
-    heroBackdrop: "default", // 'default' | '0' | '1' | '2' | '3'
-    activeThumb: "diy", // 'diy' | 'studio' | 'clip' | 'fabric'
+    heroBackdrop: "default", // 'default' (4-comb architectural hero) | '0' | '1' | '2' | '3' (oil paintings)
+    activeThumb: "main", // 'main' | 'box' | 'detail' | 'clip'
     diy: {
       edition: "single",
-      color: "ivoryMatcha",
       scent: "matchaCedar",
       secondScent: "hinokiRain",
-      qty: 1,
-      flipped: false
+      previewKey: null, // null -> show diy.scent; set to diy.secondScent when previewing 2nd comb in duo
+      qty: 1
     },
-    bag: loadStored("halo_bag", []).filter((i) => i && EDITION_KEYS.includes(i.edition)),
+    bag: loadStored("halo_bag", []).filter((i) => i && EDITION_KEYS.includes(i.edition) && SCENT_KEYS.includes(i.scent)),
     checkout: {
       delivery: "ship",
       payment: "wechat"
@@ -209,7 +211,14 @@
     }
   }
 
+  let cancelActiveHeroBurn = null;
+  let emitBurnRingFx = null;
+  let activeBurnTargetRoute = null;
+
   function renderActiveRoute(route) {
+    if (cancelActiveHeroBurn && activeBurnTargetRoute !== route) {
+      cancelActiveHeroBurn();
+    }
     state.route = route;
     const isScentDetail = route.startsWith("/scents/");
     let activeViewKey = route;
@@ -223,7 +232,7 @@
       renderScentDetail(state.activeScentDetail);
     }
 
-    // Reset homepage hero backdrop cleanly to product photo when returning to #/
+    // Reset homepage hero cleanly to architectural 4-comb hero when returning to #/
     if (route === "/") {
       setHeroBackdrop("default", true);
     }
@@ -272,7 +281,7 @@
     syncAccordionLabels();
   }
 
-  /* ---------- Hero 4-Column Curtain & Mist-Dissolve Oil Painting Backdrop ---------- */
+  /* ---------- Hero Architectural 4-Comb Backdrop + Mist Oil-Painting Hover ---------- */
   let heroMistSwapTimer = null;
   let heroMistClearTimer = null;
 
@@ -302,7 +311,7 @@
       return;
     }
 
-    // Brief mist pulse -> reveal new botanical oil painting -> dissolve mist cleanly
+    // Brief mist pulse -> reveal new botanical oil painting (or architectural hero) -> dissolve mist cleanly
     veil.classList.add("is-misting");
     heroMistSwapTimer = setTimeout(() => {
       applyTarget();
@@ -326,7 +335,14 @@
     `).join("");
   }
 
-  /* ---------- Product Detail & DIY Customizer ---------- */
+  /* ---------- Product Detail & Scent-Bound Fixed Finish Selector ---------- */
+  function getActiveStageScentKey() {
+    if (state.diy.edition === "duo" && state.diy.previewKey && SCENT_KEYS.includes(state.diy.previewKey)) {
+      return state.diy.previewKey;
+    }
+    return state.diy.scent;
+  }
+
   function getDiyUnitPrice() {
     const ed = t(`pdp.editions.${state.diy.edition}`);
     return ed ? ed.price : 78;
@@ -341,20 +357,22 @@
   function renderPdpThumbs() {
     const thumbsEl = document.getElementById("pdpThumbs");
     if (!thumbsEl) return;
-    const vis = COLORWAYS[state.diy.color] || COLORWAYS.ivoryMatcha;
+    const scKey = getActiveStageScentKey();
+    const prod = SCENT_PRODUCTS[scKey] || SCENT_PRODUCTS.matchaCedar;
+    const sc = t(`pdp.scents.${scKey}`);
 
     thumbsEl.innerHTML = `
-      <button type="button" class="pdp-thumb ${state.activeThumb === "diy" ? "is-active" : ""}" data-thumb="diy" title="${t("pdp.thumbs.diy")}">
-        <img src="${vis.photo}" alt="${t(`pdp.colors.${state.diy.color}.name`)}" />
+      <button type="button" class="pdp-thumb ${state.activeThumb === "main" ? "is-active" : ""}" data-thumb="main" title="${t("pdp.thumbs.main")}">
+        <img src="${prod.main}" alt="${sc.name} — ${t("pdp.thumbs.main")}" />
       </button>
-      <button type="button" class="pdp-thumb ${state.activeThumb === "studio" ? "is-active" : ""}" data-thumb="studio" title="${t("pdp.thumbs.studio")}">
-        <img src="./assets/hero-comb.jpg" alt="Studio view" />
+      <button type="button" class="pdp-thumb ${state.activeThumb === "box" ? "is-active" : ""}" data-thumb="box" title="${t("pdp.thumbs.box")}">
+        <img src="${prod.box}" alt="${sc.name} — ${t("pdp.thumbs.box")}" />
+      </button>
+      <button type="button" class="pdp-thumb ${state.activeThumb === "detail" ? "is-active" : ""}" data-thumb="detail" title="${t("pdp.thumbs.detail")}">
+        <img src="${prod.detail}" alt="${sc.name} — ${t("pdp.thumbs.detail")}" />
       </button>
       <button type="button" class="pdp-thumb ${state.activeThumb === "clip" ? "is-active" : ""}" data-thumb="clip" title="${t("pdp.thumbs.clip")}">
-        <img src="./assets/concept-clip.jpg" alt="Clip mechanism" />
-      </button>
-      <button type="button" class="pdp-thumb ${state.activeThumb === "fabric" ? "is-active" : ""}" data-thumb="fabric" title="${t("pdp.thumbs.fabric")}">
-        <img src="./assets/scene-social.jpg" alt="On fabric" />
+        <img src="./assets/concept-clip.jpg" alt="${t("pdp.thumbs.clip")}" />
       </button>
     `;
   }
@@ -362,28 +380,63 @@
   function renderPdpStage() {
     const stageEl = document.getElementById("pdpMainStage");
     if (!stageEl) return;
-    const vis = COLORWAYS[state.diy.color] || COLORWAYS.ivoryMatcha;
-    const colorName = t(`pdp.colors.${state.diy.color}.name`);
+    const scKey = getActiveStageScentKey();
+    const prod = SCENT_PRODUCTS[scKey] || SCENT_PRODUCTS.matchaCedar;
+    const sc = t(`pdp.scents.${scKey}`);
 
-    if (state.activeThumb === "diy") {
-      stageEl.innerHTML = `<img src="${vis.photo}" alt="HALO Scent Comb — ${colorName}" />`;
-    } else if (state.activeThumb === "studio") {
-      stageEl.innerHTML = `<img src="./assets/hero-comb.jpg" alt="HALO Scent Comb Studio" />`;
-    } else if (state.activeThumb === "clip") {
-      stageEl.innerHTML = `<img src="./assets/concept-clip.jpg" class="is-contain" alt="HALO Spring-loaded Clip Mechanism" />`;
+    if (state.activeThumb === "main") {
+      stageEl.innerHTML = `<img src="${prod.main}" alt="HALO Scent Comb — ${sc.name} (${sc.finish})" />`;
+    } else if (state.activeThumb === "box") {
+      stageEl.innerHTML = `<img src="${prod.box}" alt="HALO Gift Box — ${sc.name}" />`;
+    } else if (state.activeThumb === "detail") {
+      stageEl.innerHTML = `<img src="${prod.detail}" alt="HALO Engraved Craft Detail — ${sc.finish}" />`;
     } else {
-      stageEl.innerHTML = `<img src="./assets/scene-social.jpg" alt="HALO Flip to Rub Fabric" />`;
+      stageEl.innerHTML = `<img src="./assets/concept-clip.jpg" class="is-contain" alt="HALO Spring-loaded Clip Mechanism" />`;
     }
 
-    const frontBtn = document.getElementById("viewFrontBtn");
+    const mainBtn = document.getElementById("viewMainBtn");
+    const boxBtn = document.getElementById("viewBoxBtn");
+    const detailBtn = document.getElementById("viewDetailBtn");
     const clipBtn = document.getElementById("viewClipBtn");
-    const fabricBtn = document.getElementById("viewFabricBtn");
-    if (frontBtn) frontBtn.classList.toggle("is-active", state.activeThumb === "diy");
+    if (mainBtn) mainBtn.classList.toggle("is-active", state.activeThumb === "main");
+    if (boxBtn) boxBtn.classList.toggle("is-active", state.activeThumb === "box");
+    if (detailBtn) detailBtn.classList.toggle("is-active", state.activeThumb === "detail");
     if (clipBtn) clipBtn.classList.toggle("is-active", state.activeThumb === "clip");
-    if (fabricBtn) fabricBtn.classList.toggle("is-active", state.activeThumb === "fabric");
   }
 
   function renderPdpForm() {
+    const activeSc = t(`pdp.scents.${state.diy.scent}`);
+    const stageSc = t(`pdp.scents.${getActiveStageScentKey()}`);
+
+    const subEl = document.getElementById("pdpActiveEditionSub");
+    if (subEl && stageSc) {
+      subEl.textContent = `NO. ${stageSc.code} · ${stageSc.name} · ${stageSc.finish}`;
+    }
+
+    const scentGrid = document.getElementById("scentEditionGrid");
+    const finishHint = document.getElementById("scentFinishHint");
+    if (scentGrid) {
+      scentGrid.innerHTML = SCENT_KEYS.map((k) => {
+        const sc = t(`pdp.scents.${k}`);
+        const prod = SCENT_PRODUCTS[k];
+        const selected = state.diy.scent === k;
+        return `
+          <button type="button" class="scent-ed-btn ${selected ? "is-selected" : ""}" data-scent-pick="${k}" role="radio" aria-checked="${selected}">
+            <span class="scent-ed-thumb">
+              <img src="${prod.detail}" alt="${sc.name} ${sc.finish}" />
+            </span>
+            <span class="scent-ed-text">
+              <span class="scent-ed-name">${sc.code} · ${sc.name}</span>
+              <span class="scent-ed-finish">${sc.finish}</span>
+            </span>
+          </button>
+        `;
+      }).join("");
+    }
+    if (finishHint && activeSc) {
+      finishHint.textContent = `${activeSc.finishDesc}`;
+    }
+
     const edSelect = document.getElementById("editionSelect");
     const edHint = document.getElementById("editionHint");
     if (edSelect) {
@@ -391,39 +444,36 @@
         const ed = t(`pdp.editions.${k}`);
         return `<option value="${k}" ${state.diy.edition === k ? "selected" : ""}>${ed.name} (${ed.short}) — ${formatPrice(ed.price)}</option>`;
       }).join("");
+      syncCustomSelect(edSelect);
     }
     if (edHint) edHint.textContent = t(`pdp.editions.${state.diy.edition}.note`);
 
-    const swatchRow = document.getElementById("colorSwatchRow");
-    const colorNameEl = document.getElementById("activeColorName");
-    if (swatchRow) {
-      swatchRow.innerHTML = COLOR_KEYS.map((k) => {
-        const vis = COLORWAYS[k];
-        const col = t(`pdp.colors.${k}`);
-        return `<button type="button" class="ledger-swatch-btn ${state.diy.color === k ? "is-selected" : ""}" data-color="${k}" style="background: ${vis.swatchGrad};" aria-label="${col.name}" title="${col.name}"></button>`;
-      }).join("");
-    }
-    if (colorNameEl) colorNameEl.textContent = t(`pdp.colors.${state.diy.color}.name`);
-
-    const scSelect = document.getElementById("scentSelect");
-    const scMoodEl = document.getElementById("scentMoodHint");
-    if (scSelect) {
-      scSelect.innerHTML = SCENT_KEYS.map((k) => {
-        const sc = t(`pdp.scents.${k}`);
-        return `<option value="${k}" ${state.diy.scent === k ? "selected" : ""}>${sc.code} · ${sc.name} (${sc.en})</option>`;
-      }).join("");
-    }
-    const activeSc = t(`pdp.scents.${state.diy.scent}`);
-    if (scMoodEl) scMoodEl.textContent = activeSc.mood;
-
     const duoRow = document.getElementById("duoSecondRow");
     const duoSelect = document.getElementById("duoSecondSelect");
+    const duoPreview = document.getElementById("duoSecondPreview");
     if (duoRow && duoSelect) {
-      duoRow.style.display = state.diy.edition === "duo" ? "grid" : "none";
+      const isDuo = state.diy.edition === "duo";
+      duoRow.style.display = isDuo ? "grid" : "none";
       duoSelect.innerHTML = SCENT_KEYS.map((k) => {
         const sc = t(`pdp.scents.${k}`);
-        return `<option value="${k}" ${state.diy.secondScent === k ? "selected" : ""}>${sc.code} · ${sc.name} (${sc.en})</option>`;
+        return `<option value="${k}" ${state.diy.secondScent === k ? "selected" : ""}>${sc.code} · ${sc.name} · ${sc.finish}</option>`;
       }).join("");
+      syncCustomSelect(duoSelect);
+
+      if (duoPreview && isDuo) {
+        const sc2 = t(`pdp.scents.${state.diy.secondScent}`);
+        const prod2 = SCENT_PRODUCTS[state.diy.secondScent] || SCENT_PRODUCTS.hinokiRain;
+        const showingSecond = state.diy.previewKey === state.diy.secondScent;
+        duoPreview.innerHTML = `
+          <div class="duo-preview-left">
+            <img class="duo-preview-thumb" src="${prod2.main}" alt="${sc2.name}" />
+            <span class="duo-preview-label">${sc2.code} · ${sc2.name}（${sc2.finish}）</span>
+          </div>
+          <button type="button" class="under-link ${showingSecond ? "is-active" : ""}" id="toggleSecondPreviewBtn">
+            ${showingSecond ? t("pdp.previewingSecond") : t("pdp.previewSecond")}
+          </button>
+        `;
+      }
     }
 
     const total = getDiyUnitPrice() * state.diy.qty;
@@ -432,8 +482,8 @@
     document.getElementById("ctaPriceEcho").textContent = formatPrice(total);
 
     const notesLine = document.getElementById("pdpNotesLine");
-    if (notesLine) {
-      notesLine.textContent = `${t("pdp.notesPrefix")} ${t("pdp.notesTop")} ${activeSc.top} / ${t("pdp.notesHeart")} ${activeSc.heart} / ${t("pdp.notesBase")} ${activeSc.base}`;
+    if (notesLine && stageSc) {
+      notesLine.textContent = `${t("pdp.notesPrefix")} ${t("pdp.notesTop")} ${stageSc.top} / ${t("pdp.notesHeart")} ${stageSc.heart} / ${t("pdp.notesBase")} ${stageSc.base}`;
     }
   }
 
@@ -469,9 +519,13 @@
       const painting = SCENT_PAINTINGS[k];
       return `
         <article class="specimen-plate" data-open-scent="${k}" role="button" tabindex="0" aria-label="${sc.code} ${sc.name}">
-          <div class="specimen-art">
-            <img src="${painting}" alt="${sc.en} — ${sc.name}" loading="lazy" />
-            ${buildSignatureSvg(k)}
+          <div class="specimen-frame">
+            <div class="specimen-art">
+              <img class="specimen-painting" src="${painting}" alt="${sc.en} — ${sc.name}" loading="lazy" />
+              <div class="specimen-rabbet-shadow" aria-hidden="true"></div>
+              ${buildSignatureSvg(k)}
+            </div>
+            <img class="specimen-frame-gilt" src="./assets/frame-gilt.png" alt="" aria-hidden="true" draggable="false" />
           </div>
           <div class="specimen-caption-head">
             <span class="specimen-en">${sc.en}</span>
@@ -673,22 +727,22 @@
     footer.style.display = "block";
     body.innerHTML = state.bag.map((item, idx) => {
       const ed = t(`pdp.editions.${item.edition}`);
-      const col = t(`pdp.colors.${item.color}`);
       const sc = t(`pdp.scents.${item.scent}`);
-      const vis = COLORWAYS[item.color] || COLORWAYS.ivoryMatcha;
-      const meta = [col.name, sc.name];
-      if (item.edition === "duo" && item.secondScent) {
-        meta.push(`+ ${t(`pdp.scents.${item.secondScent}.name`)}`);
+      const prod = SCENT_PRODUCTS[item.scent] || SCENT_PRODUCTS.matchaCedar;
+      const meta = [`${sc.code} · ${sc.name}（${sc.finish}）`];
+      if (item.edition === "duo" && item.secondScent && SCENT_KEYS.includes(item.secondScent)) {
+        const sc2 = t(`pdp.scents.${item.secondScent}`);
+        meta.push(`+ ${sc2.code} · ${sc2.name}（${sc2.finish}）`);
       }
-      const addonNames = (item.addons || []).map((k) => t(`pdp.addons.${k}.name`));
-      const addonLine = addonNames.length ? `<br />${t("bag.addonPrefix")}${addonNames.join(" / ")}` : "";
 
       return `
         <div class="bag-item">
-          <div class="bag-item-swatch" style="background: ${vis.swatchGrad};"></div>
+          <div class="bag-item-swatch">
+            <img src="${prod.main}" alt="${sc.name}" />
+          </div>
           <div class="bag-item-info">
             <div class="bag-item-title">HALO · ${ed.name}</div>
-            <div class="bag-item-meta">${meta.join(" · ")}${addonLine}</div>
+            <div class="bag-item-meta">${meta.join("<br />")}</div>
             <div class="bag-item-controls">
               <div class="mini-qty">
                 <button type="button" data-bag-delta="-1" data-bag-idx="${idx}" aria-label="Decrease">−</button>
@@ -713,7 +767,6 @@
   function addCurrentDiyToBag() {
     const signature = [
       state.diy.edition,
-      state.diy.color,
       state.diy.scent,
       state.diy.edition === "duo" ? state.diy.secondScent : ""
     ].join("|");
@@ -726,10 +779,8 @@
       state.bag.push({
         signature,
         edition: state.diy.edition,
-        color: state.diy.color,
         scent: state.diy.scent,
         secondScent: state.diy.edition === "duo" ? state.diy.secondScent : null,
-        addons: [],
         unitPrice,
         qty: state.diy.qty
       });
@@ -748,12 +799,14 @@
       slotSel.innerHTML = [t("rsvp.slot1"), t("rsvp.slot2"), t("rsvp.slot3")]
         .map((label) => `<option value="${label}">${label}</option>`)
         .join("");
+      syncCustomSelect(slotSel);
     }
     if (scentSel) {
       scentSel.innerHTML = SCENT_KEYS.map((k) => {
         const sc = t(`pdp.scents.${k}`);
         return `<option value="${k}">${sc.code} · ${sc.name}</option>`;
       }).join("");
+      syncCustomSelect(scentSel);
     }
   }
 
@@ -891,13 +944,34 @@
         const col = e.target.closest("[data-hero-idx]");
         if (!col) return;
         e.preventDefault();
+        if (state.isBurning) return;
+
         const idx = Number(col.dataset.heroIdx);
         const targetRoute = col.dataset.heroRoute;
-        if (idx === 2) {
-          navigateTo("/comb", { thumb: "clip" });
-        } else {
-          navigateTo(targetRoute);
-        }
+        const navOpts = {};
+
+        // Determine click origin (fallback to column center if triggered via keyboard Enter)
+        const rect = col.getBoundingClientRect();
+        const hasPointerCoords = e.clientX > 0 || e.clientY > 0;
+        const clickX = hasPointerCoords ? e.clientX : rect.left + rect.width * 0.35;
+        const clickY = hasPointerCoords ? e.clientY : rect.top + rect.height * 0.45;
+
+        // Grab currently visible hero painting (or default 4-comb hero if clicked without hover)
+        const media = document.getElementById("heroMedia");
+        const activeImg =
+          (media && media.querySelector(`.hero-bg-layer[data-hero-bg="${idx}"]`)) ||
+          (media && media.querySelector(".hero-bg-layer.is-visible")) ||
+          (media && media.querySelector(".hero-bg-default"));
+        const isPainting = Boolean(activeImg && activeImg.classList.contains("hero-bg-paint"));
+
+        triggerHeroBurn({
+          imgEl: activeImg,
+          isPainting,
+          clientX: clickX,
+          clientY: clickY,
+          targetRoute,
+          navOpts,
+        });
       });
     }
 
@@ -911,8 +985,20 @@
     });
 
     // PDP Under-image Physical View Links
-    document.getElementById("viewFrontBtn").addEventListener("click", () => {
-      state.activeThumb = "diy";
+    document.getElementById("viewMainBtn").addEventListener("click", () => {
+      state.activeThumb = "main";
+      renderPdpThumbs();
+      renderPdpStage();
+    });
+
+    document.getElementById("viewBoxBtn").addEventListener("click", () => {
+      state.activeThumb = "box";
+      renderPdpThumbs();
+      renderPdpStage();
+    });
+
+    document.getElementById("viewDetailBtn").addEventListener("click", () => {
+      state.activeThumb = "detail";
       renderPdpThumbs();
       renderPdpStage();
     });
@@ -923,33 +1009,37 @@
       renderPdpStage();
     });
 
-    document.getElementById("viewFabricBtn").addEventListener("click", () => {
-      state.activeThumb = "fabric";
-      renderPdpThumbs();
-      renderPdpStage();
+    // PDP Scent-Bound Fixed Finish Visual Selector
+    document.getElementById("scentEditionGrid").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-scent-pick]");
+      if (!btn) return;
+      state.diy.scent = btn.dataset.scentPick;
+      state.diy.previewKey = null;
+      if (state.activeThumb === "clip") state.activeThumb = "main";
+      renderPdp();
     });
 
-    // PDP Ledger Controls
+    // PDP Edition & Second Scent Controls
     document.getElementById("editionSelect").addEventListener("change", (e) => {
       state.diy.edition = e.target.value;
+      if (state.diy.edition !== "duo") state.diy.previewKey = null;
       renderPdp();
-    });
-
-    document.getElementById("colorSwatchRow").addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-color]");
-      if (!btn) return;
-      state.diy.color = btn.dataset.color;
-      state.activeThumb = "diy";
-      renderPdp();
-    });
-
-    document.getElementById("scentSelect").addEventListener("change", (e) => {
-      state.diy.scent = e.target.value;
-      renderPdpForm();
     });
 
     document.getElementById("duoSecondSelect").addEventListener("change", (e) => {
+      const prevSecond = state.diy.secondScent;
       state.diy.secondScent = e.target.value;
+      if (state.diy.previewKey === prevSecond) {
+        state.diy.previewKey = state.diy.secondScent;
+      }
+      renderPdp();
+    });
+
+    document.getElementById("duoSecondPreview").addEventListener("click", (e) => {
+      if (!e.target.closest("#toggleSecondPreviewBtn")) return;
+      state.diy.previewKey = state.diy.previewKey === state.diy.secondScent ? null : state.diy.secondScent;
+      if (state.activeThumb === "clip") state.activeThumb = "main";
+      renderPdp();
     });
 
     document.getElementById("pdpQtyMinus").addEventListener("click", () => {
@@ -1052,8 +1142,9 @@
         const btn = e.target.closest("[data-customize-scent]");
         if (!btn) return;
         state.diy.scent = btn.dataset.customizeScent;
-        renderPdpForm();
-        navigateTo("/comb", { thumb: "diy" });
+        state.diy.previewKey = null;
+        renderPdp();
+        navigateTo("/comb", { thumb: "main" });
       });
     }
 
@@ -1166,8 +1257,1047 @@
     });
   }
 
+  /* ---------- Custom In-DOM Hairline Dropdowns (Zero Native OS Select Popup) ---------- */
+  const customSelectRegistry = new Map();
+
+  function closeAllCustomSelects(exceptWrap) {
+    customSelectRegistry.forEach(({ wrap, trigger }) => {
+      if (wrap !== exceptWrap) {
+        wrap.classList.remove("is-open");
+        trigger.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
+  function ensureCustomSelect(selectEl) {
+    if (!selectEl) return null;
+    if (customSelectRegistry.has(selectEl)) return customSelectRegistry.get(selectEl);
+
+    const isBoxed = selectEl.classList.contains("form-select");
+    selectEl.classList.add("halo-select-native");
+    selectEl.tabIndex = -1;
+    selectEl.setAttribute("aria-hidden", "true");
+
+    const wrap = document.createElement("div");
+    wrap.className = isBoxed ? "halo-select halo-select--boxed" : "halo-select";
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "halo-select-trigger";
+    trigger.setAttribute("role", "combobox");
+    trigger.setAttribute("aria-haspopup", "listbox");
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.innerHTML = `
+      <span class="halo-select-label"></span>
+      <svg class="halo-select-chevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="square" aria-hidden="true">
+        <polyline points="2.5,4.25 6,7.75 9.5,4.25"></polyline>
+      </svg>
+    `;
+
+    const menu = document.createElement("div");
+    menu.className = "halo-select-menu";
+    menu.setAttribute("role", "listbox");
+
+    wrap.appendChild(trigger);
+    wrap.appendChild(menu);
+    selectEl.parentNode.insertBefore(wrap, selectEl.nextSibling);
+
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const willOpen = !wrap.classList.contains("is-open");
+      closeAllCustomSelects(willOpen ? wrap : null);
+      wrap.classList.toggle("is-open", willOpen);
+      trigger.setAttribute("aria-expanded", String(willOpen));
+    });
+
+    menu.addEventListener("click", (e) => {
+      const optBtn = e.target.closest(".halo-select-option");
+      if (!optBtn) return;
+      e.stopPropagation();
+      const val = optBtn.dataset.value;
+      if (selectEl.value !== val) {
+        selectEl.value = val;
+        selectEl.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      syncCustomSelect(selectEl);
+      closeAllCustomSelects(null);
+      trigger.focus();
+    });
+
+    // Redirect associated <label for="..."> clicks to open our custom dropdown instead of native OS popup
+    if (selectEl.id) {
+      const assocLabel = document.querySelector(`label[for="${selectEl.id}"]`);
+      if (assocLabel) {
+        assocLabel.addEventListener("click", (e) => {
+          e.preventDefault();
+          trigger.click();
+        });
+      }
+    }
+
+    const entry = { wrap, trigger, menu, labelEl: trigger.querySelector(".halo-select-label") };
+    customSelectRegistry.set(selectEl, entry);
+    return entry;
+  }
+
+  function syncCustomSelect(selectEl) {
+    const entry = ensureCustomSelect(selectEl);
+    if (!entry) return;
+    const options = Array.from(selectEl.options);
+    const activeOpt = options[selectEl.selectedIndex] || options[0];
+    entry.labelEl.textContent = activeOpt ? activeOpt.textContent : "";
+
+    entry.menu.innerHTML = options
+      .map((opt) => {
+        const isSel = opt.value === selectEl.value;
+        return `
+          <button type="button" class="halo-select-option ${isSel ? "is-selected" : ""}" role="option" aria-selected="${isSel}" data-value="${opt.value.replace(/"/g, "&quot;")}">
+            <span>${opt.textContent}</span>
+            <span class="halo-select-check" aria-hidden="true">✓</span>
+          </button>
+        `;
+      })
+      .join("");
+  }
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".halo-select")) closeAllCustomSelects(null);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAllCustomSelects(null);
+  });
+
+  /* ---------- Custom Brand Cursor: Comic Hand Cigarette + Live Smoke & Stub-Out ---------- */
+  function initHaloCursor() {
+    const cursorEl = document.getElementById("haloCursor");
+    const canvas = document.getElementById("haloSmokeCanvas");
+    if (!cursorEl || !canvas || !window.matchMedia) return;
+
+    const finePointerMQ = window.matchMedia("(hover: hover) and (pointer: fine)");
+    if (!finePointerMQ.matches) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.documentElement.classList.add("has-halo-cursor");
+    document.body.classList.add("has-halo-cursor");
+
+    const INTERACTIVE_SELECTOR = [
+      "a",
+      "button",
+      "select",
+      "input",
+      "textarea",
+      "label",
+      "summary",
+      '[role="button"]',
+      '[role="option"]',
+      '[role="radio"]',
+      '[role="tab"]',
+      '[role="combobox"]',
+      ".curtain-col",
+      ".specimen-plate",
+      ".pdp-main-stage",
+      ".scent-banner",
+      ".bag-item",
+      ".choice-pill",
+      ".accordion-trigger",
+      ".halo-select-trigger",
+      ".halo-select-option",
+    ].join(", ");
+
+    let vw = window.innerWidth;
+    let vh = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resizeCanvas() {
+      vw = window.innerWidth;
+      vh = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(vw * dpr);
+      canvas.height = Math.round(vh * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas, { passive: true });
+
+    let isVisible = false;
+    let isInteractive = false;
+    let snuffedUntil = 0;
+
+    let cx = -200;
+    let cy = -200;
+    let lastEmitX = -200;
+    let lastEmitY = -200;
+    let lastMoveTime = 0;
+    let lastIdleEmit = 0;
+    let moveClearTimer = 0;
+    let stubTimer = 0;
+    let snuffTimer = 0;
+    let rafId = 0;
+
+    const particles = [];
+    const MAX_PARTICLES = 150;
+
+    function addParticle(p) {
+      if (particles.length >= MAX_PARTICLES) particles.shift();
+      particles.push(p);
+      ensureLoop();
+    }
+
+    function emitSmokePuff(x, y, vxBase, vyBase, options) {
+      if (reducedMotion) return;
+      const opts = options || {};
+      addParticle({
+        kind: "smoke",
+        x: x + (Math.random() - 0.5) * (opts.jitter || 2.2),
+        y: y + (Math.random() - 0.5) * (opts.jitter || 2.2),
+        vx: vxBase + (Math.random() - 0.5) * 0.24,
+        vy: vyBase - Math.random() * 0.35,
+        r: opts.r0 || (2.4 + Math.random() * 1.6),
+        rEnd: opts.rEnd || (15 + Math.random() * 9),
+        alpha: opts.alpha || (0.36 + Math.random() * 0.14),
+        age: 0,
+        life: opts.life || (980 + Math.random() * 520),
+        phase: Math.random() * Math.PI * 2,
+        freq: 0.0042 + Math.random() * 0.0024,
+        sway: 0.22 + Math.random() * 0.24,
+      });
+    }
+
+    function emitStubOutFx(x, y) {
+      if (reducedMotion) return;
+
+      addParticle({
+        kind: "smudge",
+        x,
+        y,
+        r: 2.5,
+        rEnd: 10,
+        alpha: 0.30,
+        age: 0,
+        life: 580,
+      });
+
+      const sparkCount = 5;
+      for (let i = 0; i < sparkCount; i += 1) {
+        const ang = (Math.PI * 2 * i) / sparkCount + (Math.random() - 0.5) * 0.65;
+        const spd = 1.0 + Math.random() * 1.6;
+        addParticle({
+          kind: "spark",
+          x: x + (Math.random() - 0.5) * 1.5,
+          y: y + (Math.random() - 0.5) * 1.5,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd - 0.7,
+          r: 0.9 + Math.random() * 0.8,
+          alpha: 0.92,
+          age: 0,
+          life: 210 + Math.random() * 140,
+        });
+      }
+
+      const ashCount = 8;
+      for (let i = 0; i < ashCount; i += 1) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = 0.6 + Math.random() * 1.4;
+        addParticle({
+          kind: "ash",
+          x: x + (Math.random() - 0.5) * 2,
+          y: y + (Math.random() - 0.5) * 2,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd - 0.3,
+          r: 0.7 + Math.random() * 1.0,
+          shade: Math.random() > 0.4 ? 54 : 112,
+          alpha: 0.75,
+          age: 0,
+          life: 340 + Math.random() * 200,
+        });
+      }
+
+      for (let i = 0; i < 4; i += 1) {
+        emitSmokePuff(
+          x + (Math.random() - 0.5) * 3,
+          y - 1,
+          (Math.random() - 0.5) * 0.38,
+          -0.62 - Math.random() * 0.4,
+          { r0: 3.0, rEnd: 19 + Math.random() * 7, alpha: 0.42, life: 880 + Math.random() * 320, jitter: 2.5 }
+        );
+      }
+    }
+
+    let lastFrameTime = performance.now();
+
+    function tick(now) {
+      const rawDt = now - lastFrameTime;
+      const dt = Math.max(0, Math.min(Number.isFinite(rawDt) ? rawDt : 16.67, 48));
+      lastFrameTime = now;
+
+      if (isVisible && !reducedMotion && now >= snuffedUntil) {
+        const idleInterval = isInteractive ? 72 : 98;
+        if (now - lastIdleEmit >= idleInterval) {
+          lastIdleEmit = now;
+          emitSmokePuff(cx + 1, cy + 1, 0.04, isInteractive ? -0.62 : -0.50, {
+            r0: isInteractive ? 2.8 : 2.3,
+            rEnd: isInteractive ? 19 : 16,
+            alpha: isInteractive ? 0.46 : 0.38,
+          });
+        }
+      }
+
+      ctx.clearRect(0, 0, vw, vh);
+
+      for (let i = particles.length - 1; i >= 0; i -= 1) {
+        const p = particles[i];
+        p.age += dt;
+        if (p.age >= p.life) {
+          particles.splice(i, 1);
+          continue;
+        }
+        const t = Math.max(0, Math.min(1, p.age / p.life));
+        const k = dt / 16.67;
+
+        if (p.kind === "smoke") {
+          p.x += (p.vx + Math.sin(p.age * p.freq + p.phase) * p.sway) * k;
+          p.y += p.vy * k;
+          p.vx *= 0.985;
+          const r = Math.max(0.5, p.r + (p.rEnd - p.r) * Math.pow(t, 0.72));
+          if (!Number.isFinite(p.x) || !Number.isFinite(p.y) || !Number.isFinite(r)) continue;
+          const fadeIn = Math.min(1, t / 0.14);
+          const fadeOut = Math.pow(1 - t, 1.38);
+          const a = p.alpha * fadeIn * fadeOut;
+
+          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+          grad.addColorStop(0, `rgba(246, 248, 244, ${(a * 0.86).toFixed(3)})`);
+          grad.addColorStop(0.45, `rgba(155, 165, 158, ${(a * 0.62).toFixed(3)})`);
+          grad.addColorStop(1, "rgba(120, 130, 122, 0)");
+
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (p.kind === "spark") {
+          p.x += p.vx * k;
+          p.y += p.vy * k;
+          p.vy += 0.11 * k;
+          p.vx *= 0.95;
+          const a = p.alpha * (1 - t);
+          ctx.fillStyle = `rgba(255, ${Math.round(165 - 90 * t)}, 42, ${a.toFixed(3)})`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, Math.max(0.4, p.r * (1 - t * 0.45)), 0, Math.PI * 2);
+          ctx.fill();
+        } else if (p.kind === "ash") {
+          p.x += p.vx * k;
+          p.y += p.vy * k;
+          p.vy += 0.06 * k;
+          p.vx *= 0.92;
+          const a = p.alpha * Math.pow(1 - t, 1.15);
+          ctx.fillStyle = `rgba(${p.shade}, ${p.shade + 2}, ${p.shade}, ${a.toFixed(3)})`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (p.kind === "smudge") {
+          const r = Math.max(0.5, p.r + (p.rEnd - p.r) * Math.pow(t, 0.45));
+          if (!Number.isFinite(p.x) || !Number.isFinite(p.y) || !Number.isFinite(r)) continue;
+          const a = p.alpha * Math.pow(1 - t, 1.35);
+          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+          grad.addColorStop(0, `rgba(46, 52, 48, ${(a * 0.85).toFixed(3)})`);
+          grad.addColorStop(0.55, `rgba(82, 88, 84, ${(a * 0.4).toFixed(3)})`);
+          grad.addColorStop(1, "rgba(82, 88, 84, 0)");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      if (particles.length > 0 || (isVisible && !reducedMotion)) {
+        rafId = window.requestAnimationFrame(tick);
+      } else {
+        rafId = 0;
+      }
+    }
+
+    function ensureLoop() {
+      if (!rafId) {
+        lastFrameTime = performance.now();
+        rafId = window.requestAnimationFrame(tick);
+      }
+    }
+
+    function updateCursorState(target) {
+      if (!target || !(target instanceof Element)) {
+        isInteractive = false;
+        cursorEl.classList.remove("is-interactive");
+        return;
+      }
+      isInteractive = Boolean(target.closest(INTERACTIVE_SELECTOR));
+      cursorEl.classList.toggle("is-interactive", isInteractive);
+    }
+
+    window.addEventListener(
+      "pointermove",
+      (e) => {
+        if (e.pointerType === "touch") return;
+        const now = performance.now();
+        const prevX = cx;
+        const prevY = cy;
+        cx = e.clientX;
+        cy = e.clientY;
+        cursorEl.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+
+        if (!isVisible) {
+          isVisible = true;
+          lastEmitX = cx;
+          lastEmitY = cy;
+          cursorEl.classList.add("is-visible");
+          ensureLoop();
+        }
+
+        updateCursorState(e.target);
+
+        if (now >= snuffedUntil) {
+          const dist = Math.hypot(cx - lastEmitX, cy - lastEmitY);
+          if (dist >= 7) {
+            const dx = (cx - prevX) * 0.035;
+            const dy = (cy - prevY) * 0.025;
+            emitSmokePuff(cx + 1, cy + 1, Math.max(-0.6, Math.min(0.6, -dx)), -0.42 + Math.max(-0.3, Math.min(0.25, -dy)), {
+              r0: 2.2 + Math.min(2.0, dist * 0.045),
+              rEnd: 15 + Math.random() * 8,
+              alpha: 0.30,
+              life: 820 + Math.random() * 380,
+            });
+            lastEmitX = cx;
+            lastEmitY = cy;
+          }
+        }
+
+        if (now - lastMoveTime < 120) {
+          cursorEl.classList.add("is-moving");
+          window.clearTimeout(moveClearTimer);
+          moveClearTimer = window.setTimeout(() => {
+            cursorEl.classList.remove("is-moving");
+          }, 140);
+        }
+        lastMoveTime = now;
+      },
+      { passive: true }
+    );
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!isVisible) return;
+        const el = document.elementFromPoint(cx, cy);
+        if (el) updateCursorState(el);
+      },
+      { passive: true }
+    );
+
+    // Prevent native image/link ghost drag cursor from interrupting our custom cursor
+    document.addEventListener("dragstart", (e) => {
+      if (e.target instanceof Element && e.target.closest("img, a, button")) {
+        e.preventDefault();
+      }
+    });
+
+    let isPointerDown = false;
+    let downTimestamp = 0;
+
+    window.addEventListener(
+      "pointerdown",
+      (e) => {
+        if (e.pointerType === "touch") return;
+        cx = e.clientX;
+        cy = e.clientY;
+        cursorEl.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+        if (!isVisible) {
+          isVisible = true;
+          cursorEl.classList.add("is-visible");
+          ensureLoop();
+        }
+        updateCursorState(e.target);
+
+        isPointerDown = true;
+        downTimestamp = performance.now();
+
+        window.clearTimeout(stubTimer);
+        cursorEl.classList.add("is-stubbing", "is-snuffed");
+
+        snuffedUntil = downTimestamp + 480;
+        emitStubOutFx(cx + 1, cy + 1);
+
+        window.clearTimeout(snuffTimer);
+        snuffTimer = window.setTimeout(() => {
+          cursorEl.classList.remove("is-snuffed");
+        }, 500);
+      },
+      { passive: true }
+    );
+
+    window.addEventListener(
+      "pointerup",
+      () => {
+        if (!isPointerDown) return;
+        isPointerDown = false;
+        const elapsed = performance.now() - downTimestamp;
+        const minHold = Math.max(0, 220 - elapsed);
+        window.clearTimeout(stubTimer);
+        stubTimer = window.setTimeout(() => {
+          cursorEl.classList.remove("is-stubbing");
+        }, minHold);
+      },
+      { passive: true }
+    );
+
+    document.addEventListener("mouseout", (e) => {
+      if (!e.relatedTarget) {
+        isVisible = false;
+        isPointerDown = false;
+        cursorEl.classList.remove("is-visible", "is-moving", "is-stubbing");
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      isVisible = false;
+      isPointerDown = false;
+      cursorEl.classList.remove("is-visible", "is-moving", "is-stubbing");
+    });
+
+    // Expose particle bridge so the expanding homepage burn front showers embers & charred ash flakes
+    emitBurnRingFx = (originX, originY, radiusPx, intensity) => {
+      if (reducedMotion || radiusPx < 6) return;
+      const count = Math.max(2, Math.round(5 * intensity));
+      for (let i = 0; i < count; i += 1) {
+        const ang = Math.random() * Math.PI * 2;
+        const px = originX + Math.cos(ang) * radiusPx;
+        const py = originY + Math.sin(ang) * radiusPx;
+        if (px < -16 || px > vw + 16 || py < 96 || py > vh + 16) continue;
+
+        const roll = Math.random();
+        if (roll < 0.48) {
+          // Glowing rising fire ember
+          addParticle({
+            kind: "spark",
+            x: px + (Math.random() - 0.5) * 6,
+            y: py + (Math.random() - 0.5) * 6,
+            vx: Math.cos(ang) * (0.4 + Math.random() * 0.9) + (Math.random() - 0.5) * 0.6,
+            vy: -1.1 - Math.random() * 1.6,
+            r: 1.1 + Math.random() * 1.35,
+            alpha: 0.96,
+            age: 0,
+            life: 360 + Math.random() * 340,
+          });
+        } else if (roll < 0.80) {
+          // Curled black charred canvas flake floating upward
+          addParticle({
+            kind: "ash",
+            x: px + (Math.random() - 0.5) * 8,
+            y: py + (Math.random() - 0.5) * 8,
+            vx: (Math.random() - 0.5) * 1.1,
+            vy: -0.7 - Math.random() * 1.1,
+            r: 1.0 + Math.random() * 1.5,
+            shade: 28 + Math.round(Math.random() * 34),
+            alpha: 0.82,
+            age: 0,
+            life: 480 + Math.random() * 380,
+          });
+        } else {
+          // Billowing warm scorch smoke curling off the fire line
+          emitSmokePuff(px, py, (Math.random() - 0.5) * 0.45, -0.78 - Math.random() * 0.55, {
+            r0: 6.0 + Math.random() * 4.0,
+            rEnd: 38 + Math.random() * 22,
+            alpha: 0.42,
+            life: 1150 + Math.random() * 520,
+            jitter: 6,
+          });
+        }
+      }
+    };
+  }
+
+  /* ---------- Homepage Cigarette-Ignited Oil-Canvas Burn Transition (WebGL FBM + 2D Fallback) ---------- */
+  const heroBurnState = {
+    gl: null,
+    program: null,
+    tex: null,
+    posBuf: null,
+    uniforms: null,
+    webglFailed: false,
+    rafId: 0,
+  };
+
+  function initBurnWebGL(canvas) {
+    if (heroBurnState.webglFailed) return false;
+    if (heroBurnState.gl && heroBurnState.program) return true;
+
+    const gl = canvas.getContext("webgl", {
+      alpha: true,
+      premultipliedAlpha: true,
+      antialias: true,
+      preserveDrawingBuffer: false,
+    });
+    if (!gl) {
+      heroBurnState.webglFailed = true;
+      return false;
+    }
+
+    const vsSrc = `
+      attribute vec2 aPos;
+      varying vec2 vUv;
+      void main() {
+        vUv = vec2(aPos.x * 0.5 + 0.5, 0.5 - aPos.y * 0.5);
+        gl_Position = vec4(aPos, 0.0, 1.0);
+      }
+    `;
+
+    const fsSrc = `
+      precision highp float;
+      varying vec2 vUv;
+
+      uniform sampler2D uTex;
+      uniform vec2 uOrigin;
+      uniform float uRadius;
+      uniform float uTime;
+      uniform float uSmokeClear;
+      uniform float uCanvasAspect;
+      uniform float uImgAspect;
+      uniform float uObjPosY;
+      uniform float uBrightness;
+      uniform float uScrimStrength;
+      uniform float uUseScrim;
+      uniform float uSeed;
+
+      float hash(vec2 p) {
+        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+      }
+
+      float noise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(
+          mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+          mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+          u.y
+        );
+      }
+
+      float fbm(vec2 p) {
+        float v = 0.0;
+        float a = 0.5;
+        mat2 rot = mat2(0.80, 0.60, -0.60, 0.80);
+        for (int i = 0; i < 5; i++) {
+          v += a * noise(p);
+          p = rot * p * 2.02;
+          a *= 0.5;
+        }
+        return v;
+      }
+
+      vec2 coverUv(vec2 uv) {
+        if (uCanvasAspect > uImgAspect) {
+          float scaleY = uImgAspect / uCanvasAspect;
+          return vec2(uv.x, (uv.y - uObjPosY) * scaleY + uObjPosY);
+        } else {
+          float scaleX = uCanvasAspect / uImgAspect;
+          return vec2((uv.x - 0.5) * scaleX + 0.5, uv.y);
+        }
+      }
+
+      void main() {
+        vec2 uvImg = clamp(coverUv(vUv), 0.0, 1.0);
+        vec3 baseCol = texture2D(uTex, uvImg).rgb * uBrightness;
+
+        // Match homepage .hero-scrim dark olive bottom vignette when uUseScrim > 0.5 (disabled for gallery paintings)
+        if (uUseScrim > 0.5) {
+          float scrimT = smoothstep(0.46, 1.0, vUv.y);
+          float topScrim = mix(0.06, 0.14, uScrimStrength);
+          float botScrim = mix(0.72, 0.78, uScrimStrength);
+          float scrimA = mix(topScrim, botScrim, scrimT);
+          baseCol = mix(baseCol, vec3(0.06, 0.10, 0.08), scrimA);
+        }
+
+        // Aspect-corrected radial distance from exact cigarette click point
+        vec2 delta = vec2((vUv.x - uOrigin.x) * uCanvasAspect, vUv.y - uOrigin.y);
+        float dist = length(delta);
+
+        // Multi-octave organic jagged canvas burn shape + live upward-licking flame turbulence
+        vec2 nCoord = vec2(vUv.x * uCanvasAspect, vUv.y);
+        float nShape = fbm(nCoord * 4.8 + vec2(uSeed, uSeed * 0.63));
+        float nFine  = fbm(nCoord * 13.5 - vec2(0.0, uTime * 1.15) + vec2(uSeed * 1.3, 2.7));
+        float nTongue = fbm(nCoord * 22.0 - vec2(0.0, uTime * 2.65) + vec2(4.1, uSeed));
+
+        float shapeAmp = 0.24 * smoothstep(0.0, 0.12, uRadius);
+        float burnEdge = dist - uRadius + (nShape - 0.5) * shapeAmp + (nFine - 0.5) * 0.055;
+
+        // --- Billowing Post-Burn Smoke Veil (trails behind the flame, then gently drifts up & clears) ---
+        float burnedMask = 1.0 - smoothstep(-0.012, 0.024, burnEdge);
+        float smokeAlpha = 0.0;
+        vec3 smokeCol = vec3(0.0);
+
+        if (burnedMask > 0.001 && uSmokeClear < 0.999) {
+          // Domain-warped upward-curling smoke wisps
+          vec2 sCoord = nCoord * 2.5 + vec2(-uTime * 0.10, uTime * 0.34);
+          float sWarp = fbm(sCoord * 1.35 + vec2(uSeed * 0.45, 2.1));
+          float sBillow = fbm(sCoord + vec2(sWarp * 0.90, -uTime * 0.12));
+          float sWisp   = fbm(nCoord * 5.2 + vec2(sWarp * 0.55 - uTime * 0.06, uTime * 0.52) + uSeed);
+          float sField  = mix(sBillow, sWisp, 0.36);
+
+          // Denser smoke close behind the burning flame, softer wispy mist across the opened interior
+          float trailProx = exp(min(0.0, burnEdge) * 1.65);
+          float densityProfile = mix(0.62, 1.0, trailProx);
+
+          // Uneven wisp-by-wisp clearing as uSmokeClear progresses 0 -> 1
+          float clearCut = uSmokeClear * 1.12;
+          float smokeShape = smoothstep(clearCut - 0.24, clearCut + 0.52, sField * densityProfile);
+          float globalFade = 1.0 - smoothstep(0.55, 0.96, uSmokeClear);
+          smokeAlpha = burnedMask * smokeShape * globalFade * 0.84;
+
+          // Atmospheric smoke palette: deep charcoal-moss core -> misty pearl-ivory wisps
+          vec3 darkSmoke  = vec3(0.16, 0.19, 0.17);
+          vec3 lightSmoke = vec3(0.84, 0.87, 0.83);
+          smokeCol = mix(darkSmoke, lightSmoke, smoothstep(0.28, 0.78, sWisp));
+
+          // Warm orange firelight scattering through smoke immediately behind the flame front
+          float fireScatter = exp(min(0.0, burnEdge) * 8.5) * (1.0 - uSmokeClear * 0.85);
+          smokeCol += vec3(1.0, 0.42, 0.08) * fireScatter * (0.45 + 0.35 * sWisp);
+        }
+
+        // Fully burned-through interior: render lingering drifting smoke only (fades cleanly to 0)
+        if (burnEdge < -0.032) {
+          gl_FragColor = vec4(smokeCol * smokeAlpha, smokeAlpha);
+          return;
+        }
+
+        // Zone 1: Radiant heat-scorched oil canvas ahead of the flame (toasted umber/espresso)
+        float heatZone = 1.0 - smoothstep(0.028, 0.135, burnEdge);
+        vec3 scorchedCol = baseCol * vec3(0.58, 0.36, 0.20) - vec3(0.06, 0.04, 0.02);
+        vec3 col = mix(baseCol, max(scorchedCol, 0.0), heatZone * (0.68 + 0.25 * nFine));
+
+        // Zone 2: Carbonized crinkled black soot rim along the burning frontier
+        float charMask = 1.0 - smoothstep(0.012, 0.044, burnEdge);
+        vec3 charCol = vec3(0.055, 0.040, 0.032) * (0.75 + 0.5 * nFine);
+        col = mix(col, charCol, charMask);
+
+        // Zone 3: Living flickering incandescent flame & glowing ember frontier
+        float flameWidth = 0.026 + 0.016 * nTongue;
+        float flameBand = smoothstep(-0.022, 0.004, burnEdge) * (1.0 - smoothstep(0.006, flameWidth, burnEdge));
+        float hotCore = smoothstep(-0.006, 0.004, burnEdge) * (1.0 - smoothstep(0.004, 0.016 + 0.008 * nTongue, burnEdge));
+        float flicker = 0.78 + 0.42 * nTongue;
+
+        vec3 emberRed   = vec3(0.82, 0.14, 0.02);
+        vec3 fireOrange = vec3(1.00, 0.42, 0.06);
+        vec3 fireGold   = vec3(1.00, 0.90, 0.56);
+
+        vec3 flameCol = mix(emberRed, fireOrange, smoothstep(0.15, 0.75, flameBand * flicker));
+        flameCol = mix(flameCol, fireGold, clamp(hotCore * flicker * 1.15, 0.0, 1.0));
+
+        // Blend canvas opacity cleanly across the flame front, then composite smoke veil behind/over
+        float canvasAlpha = smoothstep(-0.004, 0.012, burnEdge);
+        float glowAlpha = smoothstep(-0.032, 0.002, burnEdge) * (1.0 - canvasAlpha) * (0.55 + 0.45 * nTongue);
+
+        vec3 finalRgb = mix(col, flameCol * (1.15 + 0.35 * hotCore), clamp(flameBand * 1.15, 0.0, 1.0));
+        float baseAlpha = clamp(canvasAlpha + glowAlpha * 0.78, 0.0, 1.0);
+        vec3 basePremul = finalRgb * canvasAlpha + flameCol * glowAlpha * 1.1;
+
+        // Porter-Duff "over" composite of smoke veil with active flame/canvas
+        vec3 outPremul = basePremul + smokeCol * smokeAlpha * (1.0 - baseAlpha);
+        float outAlpha = clamp(baseAlpha + smokeAlpha * (1.0 - baseAlpha), 0.0, 1.0);
+        gl_FragColor = vec4(outPremul, outAlpha);
+      }
+    `;
+
+    function compile(type, src) {
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        gl.deleteShader(sh);
+        return null;
+      }
+      return sh;
+    }
+
+    const vs = compile(gl.VERTEX_SHADER, vsSrc);
+    const fs = compile(gl.FRAGMENT_SHADER, fsSrc);
+    if (!vs || !fs) {
+      heroBurnState.webglFailed = true;
+      return false;
+    }
+
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      heroBurnState.webglFailed = true;
+      return false;
+    }
+
+    const posBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+      gl.STATIC_DRAW
+    );
+
+    const aPos = gl.getAttribLocation(prog, "aPos");
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+    heroBurnState.gl = gl;
+    heroBurnState.program = prog;
+    heroBurnState.tex = tex;
+    heroBurnState.posBuf = posBuf;
+    heroBurnState.uniforms = {
+      uTex: gl.getUniformLocation(prog, "uTex"),
+      uOrigin: gl.getUniformLocation(prog, "uOrigin"),
+      uRadius: gl.getUniformLocation(prog, "uRadius"),
+      uTime: gl.getUniformLocation(prog, "uTime"),
+      uSmokeClear: gl.getUniformLocation(prog, "uSmokeClear"),
+      uCanvasAspect: gl.getUniformLocation(prog, "uCanvasAspect"),
+      uImgAspect: gl.getUniformLocation(prog, "uImgAspect"),
+      uObjPosY: gl.getUniformLocation(prog, "uObjPosY"),
+      uBrightness: gl.getUniformLocation(prog, "uBrightness"),
+      uScrimStrength: gl.getUniformLocation(prog, "uScrimStrength"),
+      uUseScrim: gl.getUniformLocation(prog, "uUseScrim"),
+      uSeed: gl.getUniformLocation(prog, "uSeed"),
+    };
+    return true;
+  }
+
+  function runBurnCanvas2DFallback(canvas, originX, originY, cw, ch, durationMs, onDone) {
+    // Graceful fallback if WebGL or file:// texture upload is blocked: smooth organic fiery ring burn-through
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(cw * dpr);
+    canvas.height = Math.round(ch * dpr);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      onDone();
+      return;
+    }
+    const maxR = Math.max(
+      Math.hypot(originX, originY),
+      Math.hypot(cw - originX, originY),
+      Math.hypot(originX, ch - originY),
+      Math.hypot(cw - originX, ch - originY)
+    ) + 48;
+
+    const startTime = performance.now();
+    function frame(now) {
+      const u = Math.min(1, Math.max(0, (now - startTime) / durationMs));
+      const r = u < 0.16
+        ? 18 * (u / 0.16)
+        : 18 + (maxR - 18) * (0.18 * ((u - 0.16) / 0.84) + 0.82 * Math.pow((u - 0.16) / 0.84, 1.55));
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.fillStyle = "rgba(30, 44, 34, 0.94)";
+      ctx.fillRect(0, 0, cw, ch);
+
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.beginPath();
+      ctx.arc(originX, originY, Math.max(1, r), 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.globalCompositeOperation = "source-over";
+      const ring = ctx.createRadialGradient(originX, originY, Math.max(0, r - 14), originX, originY, r + 26);
+      ring.addColorStop(0, "rgba(255, 220, 120, 0)");
+      ring.addColorStop(0.45, "rgba(255, 118, 22, 0.85)");
+      ring.addColorStop(0.75, "rgba(42, 22, 12, 0.72)");
+      ring.addColorStop(1, "rgba(42, 22, 12, 0)");
+      ctx.fillStyle = ring;
+      ctx.beginPath();
+      ctx.arc(originX, originY, r + 26, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (emitBurnRingFx && u > 0.04 && u < 0.90) {
+        emitBurnRingFx(originX, originY + canvas.getBoundingClientRect().top, r, 1.0);
+      }
+
+      if (u < 1) {
+        heroBurnState.rafId = window.requestAnimationFrame(frame);
+      } else {
+        onDone();
+      }
+    }
+    heroBurnState.rafId = window.requestAnimationFrame(frame);
+  }
+
+  function triggerHeroBurn({ imgEl, isPainting, clientX, clientY, targetRoute, navOpts }) {
+    const reducedMotion =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const burnCanvas = document.getElementById("heroBurnCanvas");
+
+    if (reducedMotion || !burnCanvas || !imgEl || !imgEl.complete || !imgEl.naturalWidth) {
+      navigateTo(targetRoute, navOpts);
+      return;
+    }
+
+    const headerEl = document.getElementById("siteHeader");
+    const headerOffset = headerEl ? Math.max(0, Math.round(headerEl.getBoundingClientRect().bottom)) : 112;
+    const cw = window.innerWidth;
+    const ch = Math.max(240, window.innerHeight - headerOffset);
+    burnCanvas.style.left = "0px";
+    burnCanvas.style.top = `${headerOffset}px`;
+    burnCanvas.style.width = `${cw}px`;
+    burnCanvas.style.height = `${ch}px`;
+    const localX = Math.max(0, Math.min(cw, clientX));
+    const localY = Math.max(0, Math.min(ch, clientY - headerOffset));
+
+    // Slow-motion ceremonial burn (~1.50s) + billowing smoke gently clearing (~0.85s) = 2.35s total
+    const BURN_MS = 1500;
+    const SMOKE_CLEAR_START_MS = 1280;
+    const TOTAL_DURATION_MS = 2350;
+
+    state.isBurning = true;
+    activeBurnTargetRoute = targetRoute;
+
+    const cleanup = () => {
+      if (heroBurnState.rafId) {
+        window.cancelAnimationFrame(heroBurnState.rafId);
+        heroBurnState.rafId = 0;
+      }
+      if (heroBurnState.gl) {
+        heroBurnState.gl.clearColor(0, 0, 0, 0);
+        heroBurnState.gl.clear(heroBurnState.gl.COLOR_BUFFER_BIT);
+      }
+      burnCanvas.classList.remove("is-active");
+      state.isBurning = false;
+      activeBurnTargetRoute = null;
+      cancelActiveHeroBurn = null;
+    };
+    cancelActiveHeroBurn = cleanup;
+
+    // Try GPU WebGL organic FBM canvas burn shader first
+    let useWebGL = initBurnWebGL(burnCanvas);
+    if (useWebGL) {
+      try {
+        const gl = heroBurnState.gl;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        burnCanvas.width = Math.round(cw * dpr);
+        burnCanvas.height = Math.round(ch * dpr);
+        gl.viewport(0, 0, burnCanvas.width, burnCanvas.height);
+
+        gl.useProgram(heroBurnState.program);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, heroBurnState.tex);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imgEl);
+      } catch (_secErr) {
+        // file:// SecurityError fallback
+        useWebGL = false;
+      }
+    }
+
+    burnCanvas.classList.add("is-active");
+
+    if (!useWebGL) {
+      navigateTo(targetRoute, navOpts);
+      runBurnCanvas2DFallback(burnCanvas, localX, localY, cw, ch, BURN_MS, cleanup);
+      return;
+    }
+
+    const gl = heroBurnState.gl;
+    const u = heroBurnState.uniforms;
+    const canvasAspect = cw / ch;
+    const imgAspect = imgEl.naturalWidth / imgEl.naturalHeight;
+    const ox = localX / cw;
+    const oy = localY / ch;
+
+    const maxCornerDist = Math.max(
+      Math.hypot(ox * canvasAspect, oy),
+      Math.hypot((1 - ox) * canvasAspect, oy),
+      Math.hypot(ox * canvasAspect, 1 - oy),
+      Math.hypot((1 - ox) * canvasAspect, 1 - oy)
+    );
+    const maxRadius = maxCornerDist + 0.28;
+    const seed = Math.random() * 40.0 + 3.0;
+
+    gl.useProgram(heroBurnState.program);
+    gl.uniform1i(u.uTex, 0);
+    gl.uniform2f(u.uOrigin, ox, oy);
+    gl.uniform1f(u.uCanvasAspect, canvasAspect);
+    gl.uniform1f(u.uImgAspect, imgAspect);
+    gl.uniform1f(u.uObjPosY, isPainting ? 0.50 : 0.42);
+    gl.uniform1f(u.uBrightness, isPainting ? 0.89 : 0.96);
+    gl.uniform1f(u.uScrimStrength, isPainting ? 1.0 : 0.0);
+    gl.uniform1f(u.uUseScrim, 1.0);
+    gl.uniform1f(u.uSeed, seed);
+
+    function drawFrame(radius, timeSec, smokeClear) {
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.uniform1f(u.uRadius, radius);
+      gl.uniform1f(u.uTime, timeSec);
+      gl.uniform1f(u.uSmokeClear, smokeClear);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+
+    // Paint Frame 0 (intact oil painting + first ignition spark) BEFORE swapping page underneath -> ZERO white flash!
+    drawFrame(0.002, 0.0, 0.0);
+    navigateTo(targetRoute, navOpts);
+
+    const startTime = performance.now();
+    let lastParticleTime = 0;
+
+    function tickBurn(now) {
+      if (!state.isBurning) return;
+      const elapsed = Math.max(0, now - startTime);
+      const tBurn = Math.min(1, elapsed / BURN_MS);
+      const tTotal = Math.min(1, elapsed / TOTAL_DURATION_MS);
+
+      // Slow-motion flame curve (0..1500ms):
+      // 0..0.18 (~270ms): Cigarette tip catches & chars small glowing hole right at click point
+      // 0.18..1.00 (~1230ms): Majestic accelerating jagged flame sweeps the whole canvas, leaving billowing smoke behind
+      let radius;
+      if (tBurn < 0.18) {
+        const p0 = tBurn / 0.18;
+        radius = 0.002 + 0.068 * (p0 * p0 * (3 - 2 * p0));
+      } else {
+        const p1 = Math.min(1, (tBurn - 0.18) / 0.82);
+        const eased = 0.18 * p1 + 0.82 * Math.pow(p1, 1.52);
+        radius = 0.070 + (maxRadius - 0.070) * eased;
+      }
+
+      // Billowing smoke clears organically wisp-by-wisp from 1280ms -> 2350ms, unveiling the destination page!
+      let smokeClear = 0.0;
+      if (elapsed > SMOKE_CLEAR_START_MS) {
+        const sc = Math.min(1, (elapsed - SMOKE_CLEAR_START_MS) / (TOTAL_DURATION_MS - SMOKE_CLEAR_START_MS));
+        // Gentle ease-in-out dissipation
+        smokeClear = sc * sc * (3 - 2 * sc);
+      }
+
+      drawFrame(radius, elapsed * 0.001, smokeClear);
+
+      // Emit drifting embers, black char flakes & billowing scorch smoke along the expanding fire front
+      if (emitBurnRingFx && tBurn > 0.03 && tBurn < 0.94 && now - lastParticleTime >= 24) {
+        lastParticleTime = now;
+        emitBurnRingFx(clientX, clientY, radius * ch, tBurn < 0.2 ? 0.75 : 1.25);
+      }
+
+      if (tTotal < 1) {
+        heroBurnState.rafId = window.requestAnimationFrame(tickBurn);
+      } else {
+        cleanup();
+      }
+    }
+
+    heroBurnState.rafId = window.requestAnimationFrame(tickBurn);
+  }
+
   /* ---------- Init ---------- */
   applyTranslations();
   bindEvents();
   renderActiveRoute(parseRouteFromHash());
+  initHaloCursor();
 })();

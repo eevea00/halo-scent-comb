@@ -33,10 +33,10 @@ window.HALO_I18N = {
           route: "/scents"
         },
         {
-          title: "SPRING CLIP",
-          sub: "收缩卡烟盒，伸展夹手机壳……",
-          cta: "查看结构",
-          route: "/comb"
+          title: "MANIFESTO",
+          sub: "不打扰人的洁净边界，十秒回归亲近社交……",
+          cta: "阅读宣言",
+          route: "/about"
         },
         {
           title: "SHENZHEN LAB",
@@ -52,21 +52,22 @@ window.HALO_I18N = {
       subtitle: "发丝与衣物除烟味随行梳 · 含可调弹簧侧夹",
       priceNote: "CNY · 单支 ¥78 · 双支套装 ¥128",
       thumbs: {
-        diy: "配色预览",
-        studio: "静物实拍",
-        clip: "伸缩结构",
-        fabric: "拂衣示意"
+        main: "成品实拍",
+        box: "随行礼盒",
+        detail: "纹样细节",
+        clip: "弹簧侧夹"
       },
       viewLabel: "查看实物：",
-      viewFront: "当前配色实物",
-      viewClip: "弹簧侧夹结构",
-      viewFabric: "翻转拂衣示意",
+      viewMain: "成品实拍",
+      viewBox: "随行礼盒",
+      viewDetail: "纹样细节",
+      viewClip: "弹簧侧夹",
       rowEdition: "规格：",
-      rowColor: "配色：",
-      rowScent: "香调：",
+      rowScent: "香调款式：",
       rowSecondScent: "第二支香调：",
-      rowAddons: "随行配件：",
       rowQty: "数量：",
+      previewSecond: "预览第二支实物",
+      previewingSecond: "返回第一支实物",
       addToBag: "加入购物袋",
       addedToast: "已加入购物袋",
       notesPrefix: "香调层次：",
@@ -108,17 +109,13 @@ window.HALO_I18N = {
           note: "折合 ¥64/支 · 可自选两款香调 · 套装直享免邮"
         }
       },
-      colors: {
-        ivoryMatcha: { name: "象牙白 × 抹茶绿 · 首发主推色" },
-        oatSage: { name: "燕麦砂 × 鼠尾草 · 季节限定色预览" },
-        mistPine: { name: "雾岩灰 × 冷杉青 · 季节限定色预览" },
-        blushTea: { name: "柔陶粉 × 白茶雾 · 季节限定色预览" }
-      },
       scents: {
         matchaCedar: {
           code: "01",
           en: "MATCHA CEDAR",
           name: "青茶雪松",
+          finish: "雪松纹",
+          finishDesc: "深墨绿机身 × 铜棕年轮叶纹 × 抹茶半透齿 · 含同色抽屉礼盒与棉布随行袋",
           mood: "清冽干茶与雪松，中和烟草滞重感",
           family: "干爽茶木调",
           story: "专为烟后滞重气息调制的冷冽绿茶与干燥雪松。摒弃甜腻花香与刺鼻酒精，以碾碎茶芽的微苦清气率先划开黏稠烟雾，随后沉入干爽阿特拉斯雪松的木质底色，让发梢与衣领回归克制而洁净的呼吸感。",
@@ -137,6 +134,8 @@ window.HALO_I18N = {
           code: "02",
           en: "HINOKI RAIN",
           name: "雨后桧木",
+          finish: "雨林木纹",
+          finishDesc: "烟灰青机身 × 细雨扁柏木纹 × 雾青半透齿 · 含同色抽屉礼盒与棉布随行袋",
           mood: "雨后森林干木调，沉静消解焦油气",
           family: "湿润林木调",
           story: "灵感源自阵雨初歇后的日本扁柏林。冷压佛手柑与潮湿青苔带出微凉水汽，迅速抚平烟草燃烧后的燥热感；核心日本扁柏木与柏叶沉稳而通透，以安静的木质纹理包覆衣领，留下沉着内敛的体面距离。",
@@ -155,6 +154,8 @@ window.HALO_I18N = {
           code: "03",
           en: "WHITE LINEN",
           name: "晒后棉麻",
+          finish: "棉麻织影",
+          finishDesc: "暖象牙机身 × 盛放棉铃织纹 × 柔米半透齿 · 含同色抽屉礼盒与棉布随行袋",
           mood: "贴肤洁净棉感，低调自然不露馅",
           family: "洁净皂感棉调",
           story: "为不习惯香水存在感的人准备的「隐形洁净」。微凉醛香与清淡梨花水汽模拟刚洗净晾晒的白衬衫气息，几乎察觉不到刻意调香的痕迹，只让人觉得你的发丝与领口像刚沐浴完般清爽干净。",
@@ -173,6 +174,8 @@ window.HALO_I18N = {
           code: "04",
           en: "YUZU VETIVER",
           name: "柚子香根草",
+          finish: "暗岩根影",
+          finishDesc: "炭岩黑机身 × 铜金柚弧与根脉纹 × 烟琥珀半透齿 · 含同色抽屉礼盒与棉布随行袋",
           mood: "青柚皮与草本根茎，一扫烟后沉闷",
           family: "柑橘草本根茎调",
           story: "四国未熟青柚皮被指尖捻开时的清苦果皮油，碰撞微辛白胡椒与海地香根草。它不走甜橙路线，而是用明快透亮的酸苦柑橘提振气息，再以干燥草本根茎稳稳收住，烟后与火锅餐后同样干脆利落。",
@@ -279,7 +282,7 @@ window.HALO_I18N = {
     bag: {
       title: "购物袋",
       emptyTitle: "您的购物袋为空",
-      emptyDesc: "前往产品定制区，挑选适合您的配色与干爽植物香调。",
+      emptyDesc: "前往产品定制区，挑选专属外观与干爽植物香调。",
       emptyBtn: "返回定制",
       subtotal: "小计",
       shipping: "配送费",
@@ -308,7 +311,7 @@ window.HALO_I18N = {
       successEyebrow: "ORDER CONFIRMED",
       successTitle: "已为您记录定制配置。",
       successOrderNo: "演示订单编号",
-      successDesc: "您所选的配色与除烟味香调已保存。若选择深圳南山快闪自提，凭此编号即可于现场领取并试闻全部香调。",
+      successDesc: "您所选的专属香调款式已保存。若选择深圳南山快闪自提，凭此编号即可于现场领取并试闻全部香调。",
       doneBtn: "返回官网"
     },
     rsvp: {
@@ -353,10 +356,10 @@ window.HALO_I18N = {
           route: "/scents"
         },
         {
-          title: "SPRING CLIP",
-          sub: "hugs a cigarette pack or extends onto a phone...",
+          title: "MANIFESTO",
+          sub: "quiet post-smoking courtesy, ten seconds to fresh...",
           cta: "View more",
-          route: "/comb"
+          route: "/about"
         },
         {
           title: "SHENZHEN LAB",
@@ -372,21 +375,22 @@ window.HALO_I18N = {
       subtitle: "post-smoking hair & fabric odor care · adjustable spring clip",
       priceNote: "CNY · ¥78 Single · ¥128 for Two",
       thumbs: {
-        diy: "Custom",
-        studio: "Object",
-        clip: "Clip",
-        fabric: "Fabric"
+        main: "Product",
+        box: "Gift Box",
+        detail: "Detail",
+        clip: "Clip"
       },
       viewLabel: "View:",
-      viewFront: "selected finish",
-      viewClip: "spring clip (pack / phone)",
-      viewFabric: "flip to rub fabric",
+      viewMain: "finished object",
+      viewBox: "gift box set",
+      viewDetail: "engraved detail",
+      viewClip: "spring clip",
       rowEdition: "Edition:",
-      rowColor: "Color:",
-      rowScent: "Scent:",
+      rowScent: "Scent & Finish:",
       rowSecondScent: "Second scent:",
-      rowAddons: "Add-ons:",
       rowQty: "Quantity:",
+      previewSecond: "preview 2nd comb",
+      previewingSecond: "back to 1st comb",
       addToBag: "ADD TO BAG",
       addedToast: "Added to bag",
       notesPrefix: "Notes:",
@@ -428,17 +432,13 @@ window.HALO_I18N = {
           note: "Two HALO combs · choose two different scents · complimentary shipping"
         }
       },
-      colors: {
-        ivoryMatcha: { name: "Ivory × Matcha · Launch Signature" },
-        oatSage: { name: "Oat Sand × Sage · Seasonal Drop Preview" },
-        mistPine: { name: "Mist Slate × Pine · Seasonal Drop Preview" },
-        blushTea: { name: "Blush Clay × White Tea · Seasonal Drop Preview" }
-      },
       scents: {
         matchaCedar: {
           code: "01",
           en: "MATCHA CEDAR",
           name: "Matcha Cedar",
+          finish: "Cedar Trace",
+          finishDesc: "Deep forest-moss body × copper woodgrain engraving × translucent matcha teeth · includes drawer gift box & cotton pouch",
           mood: "crisp green tea & dry cedar — cuts smoky heaviness",
           family: "Dry Tea · Woody",
           story: "Composed for the heavy stillness that follows a cigarette. Rather than masking smoke with sweet florals or sharp alcohol, crushed Uji tea leaves cut cleanly through stale heaviness before settling into dry Atlas cedarwood — leaving hair and collars calm, crisp, and breathable.",
@@ -457,6 +457,8 @@ window.HALO_I18N = {
           code: "02",
           en: "HINOKI RAIN",
           name: "Hinoki Rain",
+          finish: "Rainforest Grain",
+          finishDesc: "Misty sage-grey body × cypress rain-grain engraving × pale mist teeth · includes drawer gift box & cotton pouch",
           mood: "wet forest cypress — balances stale ash notes",
           family: "Damp Forest · Cypress",
           story: "Inspired by Japanese cypress forests just after a cool downpour. Cold-pressed bergamot and damp moss ease the dry heat of burnt tobacco, while clean Hinoki heartwood harmonizes naturally with smoky undertones on knitwear and coat collars.",
@@ -475,6 +477,8 @@ window.HALO_I18N = {
           code: "03",
           en: "WHITE LINEN",
           name: "White Linen",
+          finish: "Woven Linen",
+          finishDesc: "Warm ivory body × cotton boll & linen weave illustration × translucent cream teeth · includes drawer gift box & cotton pouch",
           mood: "sun-dried cotton — discreet, just-washed finish",
           family: "Clean Cotton · Sheer Musk",
           story: "Our most discreet blend for those who prefer no obvious fragrance at all. Cool aldehydes and sheer pear mist recreate the quiet clarity of a sun-dried white shirt — leaving hair and collars smelling simply freshly washed.",
@@ -493,6 +497,8 @@ window.HALO_I18N = {
           code: "04",
           en: "YUZU VETIVER",
           name: "Yuzu Vetiver",
+          finish: "Obsidian Root",
+          finishDesc: "Matte charcoal body × copper yuzu arc & vetiver root etching × smoked amber teeth · includes drawer gift box & cotton pouch",
           mood: "green yuzu peel & root — instantly clears stale air",
           family: "Green Citrus · Earthy Root",
           story: "Unripe Shikoku yuzu zest pressed between fingertips, grounded by white pepper and Haitian vetiver root. Skipping sweet orange altogether, its crisp bitter peel clears stale smoke and dining odors alike before drying into clean, structured root wood.",
@@ -599,7 +605,7 @@ window.HALO_I18N = {
     bag: {
       title: "Shopping Bag",
       emptyTitle: "Your bag is empty",
-      emptyDesc: "Compose your colorway and botanical blend in the studio.",
+      emptyDesc: "Choose your signature botanical scent edition in the studio.",
       emptyBtn: "Return to Studio",
       subtotal: "Subtotal",
       shipping: "Shipping",
@@ -628,7 +634,7 @@ window.HALO_I18N = {
       successEyebrow: "ORDER CONFIRMED",
       successTitle: "Your custom HALO is reserved.",
       successOrderNo: "Reference",
-      successDesc: "Your colorway and botanical scent selection has been logged. Show this reference at the Shenzhen Pop-up if you chose pickup.",
+      successDesc: "Your botanical scent edition selection has been logged. Show this reference at the Shenzhen Pop-up if you chose pickup.",
       doneBtn: "RETURN TO HALO"
     },
     rsvp: {
@@ -673,10 +679,10 @@ window.HALO_I18N = {
           route: "/scents"
         },
         {
-          title: "SPRING CLIP",
-          sub: "タバコ箱にもスマホケースにも装着可能……",
-          cta: "構造を見る",
-          route: "/comb"
+          title: "MANIFESTO",
+          sub: "周囲を気遣う静かな身だしなみ、10秒でリセット……",
+          cta: "宣言を読む",
+          route: "/about"
         },
         {
           title: "SHENZHEN LAB",
@@ -692,21 +698,22 @@ window.HALO_I18N = {
       subtitle: "髪・衣類のタバコ臭ケア携帯コーム · 伸縮スプリングクリップ付",
       priceNote: "CNY · 単品 ¥78 · 2本セット ¥128",
       thumbs: {
-        diy: "カラー",
-        studio: "外観",
-        clip: "クリップ",
-        fabric: "衣類ケア"
+        main: "製品実物",
+        box: "ギフト箱",
+        detail: "刻印詳細",
+        clip: "クリップ"
       },
       viewLabel: "実物ビュー：",
-      viewFront: "選択カラー実物",
-      viewClip: "伸縮クリップ構造",
-      viewFabric: "衣類ケア使用図",
-      rowEdition: "モデル：",
-      rowColor: "カラー：",
-      rowScent: "香調：",
+      viewMain: "製品実物",
+      viewBox: "ギフトボックス",
+      viewDetail: "紋様ディテール",
+      viewClip: "伸縮クリップ",
+      rowEdition: "セット：",
+      rowScent: "香調モデル：",
       rowSecondScent: "2本目の香調：",
-      rowAddons: "オプション：",
       rowQty: "数量：",
+      previewSecond: "2本目の実物を見る",
+      previewingSecond: "1本目の実物に戻る",
       addToBag: "バッグに追加",
       addedToast: "バッグに追加しました",
       notesPrefix: "香調構成：",
@@ -748,17 +755,13 @@ window.HALO_I18N = {
           note: "1本あたり ¥64 · 2種類の香調を選択可能 · 送料無料"
         }
       },
-      colors: {
-        ivoryMatcha: { name: "アイボリー × 抹茶 · ローンチ定番色" },
-        oatSage: { name: "オートサンド × セージ · シーズン限定色プレビュー" },
-        mistPine: { name: "ミストグレー × パイン · シーズン限定色プレビュー" },
-        blushTea: { name: "ブラッシュクレイ × 白茶 · シーズン限定色プレビュー" }
-      },
       scents: {
         matchaCedar: {
           code: "01",
           en: "MATCHA CEDAR",
           name: "抹茶シダー",
+          finish: "シダー木紋",
+          finishDesc: "深緑ボディ × 銅色年輪・葉紋刻印 × 半透明抹茶歯 · 専用引き出し箱＆コットンポーチ付",
           mood: "凛とした緑茶とシダー・煙の重たさを払う",
           family: "ドライティー・ウッディ",
           story: "喫煙後の重たくこもった空気のために仕立てた、凛とした宇治茶と乾いたシダーウッド。甘い花や刺激的なアルコールに頼らず、揉んだ若葉のほろ苦い青さが煙の重みを切り開き、乾いた木肌の余韻へと静かに着地します。",
@@ -777,6 +780,8 @@ window.HALO_I18N = {
           code: "02",
           en: "HINOKI RAIN",
           name: "雨上がり檜",
+          finish: "雨林木目",
+          finishDesc: "スモーキーセージ × 雨筋・檜葉刻印 × 霧青半透明歯 · 専用引き出し箱＆コットンポーチ付",
           mood: "雨後の森のドライウッド・残り香になじむ",
           family: "湿潤フォレスト・ヒノキ",
           story: "通り雨のあとの檜林を着想源にした静謐なウッディノート。冷圧ベルガモットと湿った苔が喫煙後の乾いた熱気をクールダウンし、芯のある日本産ヒノキが襟元やニットに残るスモーキーな気配と自然になじみます。",
@@ -795,6 +800,8 @@ window.HALO_I18N = {
           code: "03",
           en: "WHITE LINEN",
           name: "陽だまりリネン",
+          finish: "リネン織り紋",
+          finishDesc: "温かなアイボリー × 綿花＆麻織り紋 × 柔らかなクリーム半透明歯 · 専用引き出し箱＆コットンポーチ付",
           mood: "洗い立ての素肌感・気づかれない自然さ",
           family: "クリーンコットン・ムスク",
           story: "「香りをつけている」と感じさせないための最も静かな処方。涼やかなアルデヒドと淡い洋梨の雫が、洗い立ての白シャツのような清潔感を再現。髪も襟元もまるでシャワーを浴びた直後のように自然です。",
@@ -813,6 +820,8 @@ window.HALO_I18N = {
           code: "04",
           en: "YUZU VETIVER",
           name: "柚子ベチバー",
+          finish: "暗岩ルート紋",
+          finishDesc: "マットチャコール × 銅色柚子弧・草根紋 × スモークアンバー歯 · 専用引き出し箱＆コットンポーチ付",
           mood: "青柚子とベチバー・こもった空気を一新",
           family: "グリーンシトラス・ベチバー",
           story: "四国産青柚子の果皮を指先で弾いた瞬間のほろ苦い爽快感に、白胡椒とハイチ産ベチバーを重ねたキレのある調香。甘い柑橘ではなく、青くドライな果皮と土のニュアンスが喫煙後や食後の重たい匂いを一気に切り替えます。",
@@ -919,7 +928,7 @@ window.HALO_I18N = {
     bag: {
       title: "ショッピングバッグ",
       emptyTitle: "バッグに商品がありません",
-      emptyDesc: "スタジオでお好みのカラーと香調をお選びください。",
+      emptyDesc: "スタジオでお好みの専用香調モデルをお選びください。",
       emptyBtn: "スタジオへ戻る",
       subtotal: "小計",
       shipping: "送料",
@@ -948,7 +957,7 @@ window.HALO_I18N = {
       successEyebrow: "ORDER CONFIRMED",
       successTitle: "カスタム HALO を記録しました。",
       successOrderNo: "デモ注文番号",
-      successDesc: "お選びいただいたカラーと香調を保存しました。会場受取をご選択の場合は当日スタッフへご提示ください。",
+      successDesc: "お選びいただいた専用香調モデルを保存しました。会場受取をご選択の場合は当日スタッフへご提示ください。",
       doneBtn: "公式サイトへ戻る"
     },
     rsvp: {
@@ -993,10 +1002,10 @@ window.HALO_I18N = {
           route: "/scents"
         },
         {
-          title: "SPRING CLIP",
-          sub: "담뱃갑에 딱 맞게, 스마트폰 케이스에도 안정적으로……",
-          cta: "구조 보기",
-          route: "/comb"
+          title: "MANIFESTO",
+          sub: "상대를 배려하는 조용한 청결 에티켓, 10초의 전환……",
+          cta: "선언 보기",
+          route: "/about"
         },
         {
           title: "SHENZHEN LAB",
@@ -1012,21 +1021,22 @@ window.HALO_I18N = {
       subtitle: "헤어 & 의류 담배 잔향 케어 포켓 콤 · 신축 스프링 클립 포함",
       priceNote: "CNY · 단품 ¥78 · 2개입 세트 ¥128",
       thumbs: {
-        diy: "컬러 프리뷰",
-        studio: "스튜디오 컷",
-        clip: "스프링 클립",
-        fabric: "의류 케어"
+        main: "제품 실물",
+        box: "기프트 박스",
+        detail: "각인 디테일",
+        clip: "스프링 클립"
       },
       viewLabel: "실물 보기:",
-      viewFront: "선택 컬러 실물",
-      viewClip: "스프링 클립 구조",
-      viewFabric: "옷깃 케어 연출",
-      rowEdition: "에디션:",
-      rowColor: "컬러:",
-      rowScent: "향조:",
+      viewMain: "제품 실물",
+      viewBox: "기프트 박스",
+      viewDetail: "문양 디테일",
+      viewClip: "스프링 클립",
+      rowEdition: "구성:",
+      rowScent: "향조 에디션:",
       rowSecondScent: "두 번째 향조:",
-      rowAddons: "추가 구성:",
       rowQty: "수량:",
+      previewSecond: "두 번째 제품 보기",
+      previewingSecond: "첫 번째 제품으로",
       addToBag: "쇼핑백에 담기",
       addedToast: "쇼핑백에 담았습니다",
       notesPrefix: "노트 구성:",
@@ -1068,17 +1078,13 @@ window.HALO_I18N = {
           note: "개당 ¥64 · 서로 다른 두 가지 향조 선택 가능 · 무료 배송"
         }
       },
-      colors: {
-        ivoryMatcha: { name: "아이보리 × 말차 · 론칭 시그니처" },
-        oatSage: { name: "오트 샌드 × 세이지 · 시즌 한정 컬러 프리뷰" },
-        mistPine: { name: "미스트 슬레이트 × 파인 · 시즌 한정 컬러 프리뷰" },
-        blushTea: { name: "블러쉬 클레이 × 화이트 티 · 시즌 한정 컬러 프리뷰" }
-      },
       scents: {
         matchaCedar: {
           code: "01",
           en: "MATCHA CEDAR",
           name: "말차 시더",
+          finish: "시더 트레이스",
+          finishDesc: "딥 모스그린 바디 × 코퍼 나이테·잎 문양 × 반투명 말차 빗살 · 전용 서랍 박스 & 코튼 파우치 포함",
           mood: "청량한 녹차 잎과 건조한 시더, 담배의 무거움을 덜어내는 향",
           family: "드라이 티 · 우디",
           story: "흡연 직후의 무겁고 텁텁한 공기를 위해 조향한 서늘한 녹차와 건조한 시더우드. 담배 냄새와 충돌하는 달콤한 플로럴이나 자극적인 알코올 대신, 짓이긴 우지 찻잎의 쌉쌀한 청량감이 잔향을 가르며 차분한 아틀라스 시더로 단정하게 마무리됩니다.",
@@ -1097,6 +1103,8 @@ window.HALO_I18N = {
           code: "02",
           en: "HINOKI RAIN",
           name: "비 갠 히노키",
+          finish: "레인포레스트 우드",
+          finishDesc: "미스트 세이지 바디 × 빗결·편백잎 각인 × 옅은 안개빛 빗살 · 전용 서랍 박스 & 코튼 파우치 포함",
           mood: "비 온 뒤 숲의 드라이 우드, 스모키한 잔향과 고요한 조화",
           family: "촉촉한 포레스트 · 히노키",
           story: "소나기가 막 지난 일본 편백나무 숲에서 영감을 받은 고요한 우디 노트입니다. 냉압착 베르가못과 젖은 이끼의 서늘한 공기가 흡연 직후의 건조한 열기를 가라앉히고, 단단한 히노키 심재가 니트와 코트 옷깃의 잔향과 자연스럽게 어우러집니다.",
@@ -1115,6 +1123,8 @@ window.HALO_I18N = {
           code: "03",
           en: "WHITE LINEN",
           name: "햇살 린넨",
+          finish: "린넨 위브",
+          finishDesc: "웜 아이보리 바디 × 목화·린넨 직조 문양 × 부드러운 크림 반투명 빗살 · 전용 서랍 박스 & 코튼 파우치 포함",
           mood: "방금 세탁한 듯한 순면 감촉, 향수 티 없는 자연스러움",
           family: "클린 코튼 · 시어 머스크",
           story: "향수 특유의 존재감을 부담스러워하는 분들을 위한 가장 은밀한 청결함입니다. 서늘한 알데하이드와 맑은 배꽃 수분이 햇볕에 바짝 마른 흰 셔츠의 공기를 재현해, 머리카락과 옷깃에서 마치 방금 샤워한 듯한 담백한 깨끗함만 남깁니다.",
@@ -1133,6 +1143,8 @@ window.HALO_I18N = {
           code: "04",
           en: "YUZU VETIVER",
           name: "유자 베티버",
+          finish: "옵시디언 루트",
+          finishDesc: "매트 차콜 바디 × 코퍼 유자 곡선·뿌리 문양 × 스모크 앰버 빗살 · 전용 서랍 박스 & 코튼 파우치 포함",
           mood: "청유자 껍질과 흙내음 뿌리, 텁텁한 공기를 단숨에 환기",
           family: "그린 시트러스 · 어시 루트",
           story: "시코쿠산 덜 익은 청유자 껍질을 손끝으로 비틀었을 때 터지는 쌉쌀한 오일에 화이트 페퍼와 아이티산 베티버 뿌리를 더했습니다. 달달한 오렌지 대신 선명하고 산뜻한 껍질 향이 흡연 후는 물론 식사 후 냄새까지 말끔하게 환기합니다.",
@@ -1239,7 +1251,7 @@ window.HALO_I18N = {
     bag: {
       title: "쇼핑백",
       emptyTitle: "쇼핑백이 비어 있습니다",
-      emptyDesc: "제품 커스텀 페이지에서 원하는 컬러와 보태니컬 향조를 조합해 보세요.",
+      emptyDesc: "제품 커스텀 페이지에서 원하는 전용 보태니컬 향조 에디션을 선택해 보세요.",
       emptyBtn: "커스텀으로 돌아가기",
       subtotal: "소계",
       shipping: "배송비",
@@ -1268,7 +1280,7 @@ window.HALO_I18N = {
       successEyebrow: "ORDER CONFIRMED",
       successTitle: "맞춤 HALO 구성이 기록되었습니다.",
       successOrderNo: "데모 주문 번호",
-      successDesc: "선택하신 컬러와 보태니컬 향조가 저장되었습니다. 선전 난산 팝업 현장 수령을 선택하신 경우 방문 시 이 번호를 보여주세요.",
+      successDesc: "선택하신 전용 보태니컬 향조 에디션이 저장되었습니다. 선전 난산 팝업 현장 수령을 선택하신 경우 방문 시 이 번호를 보여주세요.",
       doneBtn: "홈으로 돌아가기"
     },
     rsvp: {
