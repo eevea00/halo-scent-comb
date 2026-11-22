@@ -214,6 +214,7 @@
   let cancelActiveHeroBurn = null;
   let emitBurnRingFx = null;
   let activeBurnTargetRoute = null;
+  let syncHaloCursorForRoute = null;
 
   function renderActiveRoute(route) {
     if (cancelActiveHeroBurn && activeBurnTargetRoute !== route) {
@@ -243,6 +244,9 @@
     document.querySelectorAll(".header-nav-row a[data-route]").forEach((a) => {
       a.classList.toggle("is-current", a.dataset.route === activeNavKey);
     });
+    if (syncHaloCursorForRoute) {
+      syncHaloCursorForRoute(route);
+    }
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
@@ -271,6 +275,7 @@
 
     renderHeroCurtain();
     renderPdp();
+    syncTechAccordionLabel();
     renderSpecimenGrid();
     renderScentDetail(state.activeScentDetail);
     renderManifesto();
@@ -393,15 +398,6 @@
     } else {
       stageEl.innerHTML = `<img src="./assets/concept-clip.jpg" class="is-contain" alt="HALO Spring-loaded Clip Mechanism" />`;
     }
-
-    const mainBtn = document.getElementById("viewMainBtn");
-    const boxBtn = document.getElementById("viewBoxBtn");
-    const detailBtn = document.getElementById("viewDetailBtn");
-    const clipBtn = document.getElementById("viewClipBtn");
-    if (mainBtn) mainBtn.classList.toggle("is-active", state.activeThumb === "main");
-    if (boxBtn) boxBtn.classList.toggle("is-active", state.activeThumb === "box");
-    if (detailBtn) detailBtn.classList.toggle("is-active", state.activeThumb === "detail");
-    if (clipBtn) clipBtn.classList.toggle("is-active", state.activeThumb === "clip");
   }
 
   function renderPdpForm() {
@@ -635,7 +631,6 @@
     const pager = document.getElementById("scentPager");
     if (pager) {
       pager.innerHTML = `
-        <a href="#/scents" data-route="/scents" class="under-link">${t("scentDetail.backToAll")}</a>
         <div class="scent-pager-links">
           ${SCENT_KEYS.map((k) => {
             const item = t(`pdp.scents.${k}`);
@@ -810,11 +805,32 @@
     }
   }
 
+  /* ---------- Collapsible Technical Principle Label Sync (#/comb) ---------- */
+  function syncTechAccordionLabel() {
+    const sec = document.getElementById("combTechSection");
+    const head = document.getElementById("techAccHead");
+    const action = document.getElementById("techAccAction");
+    if (!sec || !action) return;
+    const isOpen = sec.classList.contains("is-open");
+    action.textContent = isOpen ? t("tech.collapseAction") : t("tech.expandAction");
+    if (head) head.setAttribute("aria-expanded", String(isOpen));
+  }
+
   /* ---------- Overlays ---------- */
   const backdrop = document.getElementById("overlayBackdrop");
   const bagDrawer = document.getElementById("bagDrawer");
   const checkoutModal = document.getElementById("checkoutModal");
   const rsvpModal = document.getElementById("rsvpModal");
+  const techLightbox = document.getElementById("techLightbox");
+
+  function openTechLightbox() {
+    if (!techLightbox) return;
+    closeAllOverlays();
+    backdrop.classList.add("is-open");
+    techLightbox.classList.add("is-open");
+    techLightbox.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
 
   function openBag() {
     closeAllOverlays();
@@ -836,7 +852,7 @@
     backdrop.classList.remove("is-open");
     bagDrawer.classList.remove("is-open");
     bagDrawer.setAttribute("aria-hidden", "true");
-    [checkoutModal, rsvpModal].forEach((m) => {
+    [checkoutModal, rsvpModal, techLightbox].forEach((m) => {
       if (m) {
         m.classList.remove("is-open");
         m.setAttribute("aria-hidden", "true");
@@ -980,31 +996,6 @@
       const btn = e.target.closest("[data-thumb]");
       if (!btn) return;
       state.activeThumb = btn.dataset.thumb;
-      renderPdpThumbs();
-      renderPdpStage();
-    });
-
-    // PDP Under-image Physical View Links
-    document.getElementById("viewMainBtn").addEventListener("click", () => {
-      state.activeThumb = "main";
-      renderPdpThumbs();
-      renderPdpStage();
-    });
-
-    document.getElementById("viewBoxBtn").addEventListener("click", () => {
-      state.activeThumb = "box";
-      renderPdpThumbs();
-      renderPdpStage();
-    });
-
-    document.getElementById("viewDetailBtn").addEventListener("click", () => {
-      state.activeThumb = "detail";
-      renderPdpThumbs();
-      renderPdpStage();
-    });
-
-    document.getElementById("viewClipBtn").addEventListener("click", () => {
-      state.activeThumb = "clip";
       renderPdpThumbs();
       renderPdpStage();
     });
@@ -1157,12 +1148,6 @@
       });
     }
 
-    // Footer Safety Shortcut -> navigate to #/comb and expand Safety accordion
-    document.getElementById("footerSafetyLink").addEventListener("click", (e) => {
-      e.preventDefault();
-      navigateTo("/comb", { openSafety: true });
-    });
-
     // RSVP Triggers
     const triggerRsvp = (e) => {
       if (e) e.preventDefault();
@@ -1244,6 +1229,39 @@
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeAllOverlays();
     });
+
+    // Collapsible Technical Principle Plate (#/comb) + Lightbox Zoom
+    const techSec = document.getElementById("combTechSection");
+    const techAccHead = document.getElementById("techAccHead");
+    const toggleTechAcc = () => {
+      if (!techSec) return;
+      techSec.classList.toggle("is-open");
+      syncTechAccordionLabel();
+    };
+    if (techAccHead) {
+      techAccHead.addEventListener("click", toggleTechAcc);
+      techAccHead.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleTechAcc();
+        }
+      });
+    }
+
+    const techPlateTrigger = document.getElementById("techPlateTrigger");
+    if (techPlateTrigger) {
+      techPlateTrigger.addEventListener("click", openTechLightbox);
+    }
+
+    const closeTechLightboxBtn = document.getElementById("closeTechLightboxBtn");
+    if (closeTechLightboxBtn) {
+      closeTechLightboxBtn.addEventListener("click", closeAllOverlays);
+    }
+    if (techLightbox) {
+      techLightbox.addEventListener("click", (e) => {
+        if (e.target === techLightbox) closeAllOverlays();
+      });
+    }
 
     // Newsletter
     document.getElementById("newsletterForm").addEventListener("submit", (e) => {
@@ -1367,7 +1385,7 @@
     if (e.key === "Escape") closeAllCustomSelects(null);
   });
 
-  /* ---------- Custom Brand Cursor: Comic Hand Cigarette + Live Smoke & Stub-Out ---------- */
+  /* ---------- Custom Brand Cursor (Homepage #/ Only): Comic Hand Cigarette + Live Smoke & Stub-Out ---------- */
   function initHaloCursor() {
     const cursorEl = document.getElementById("haloCursor");
     const canvas = document.getElementById("haloSmokeCanvas");
@@ -1380,8 +1398,8 @@
     if (!ctx) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    document.documentElement.classList.add("has-halo-cursor");
-    document.body.classList.add("has-halo-cursor");
+    let isRouteActive = false;
+    let routeDisableTimer = 0;
 
     const INTERACTIVE_SELECTOR = [
       "a",
@@ -1423,7 +1441,10 @@
     window.addEventListener("resize", resizeCanvas, { passive: true });
 
     let isVisible = false;
+    let hasPointerPos = false;
     let isInteractive = false;
+    let isPointerDown = false;
+    let downTimestamp = 0;
     let snuffedUntil = 0;
 
     let cx = -200;
@@ -1439,6 +1460,51 @@
 
     const particles = [];
     const MAX_PARTICLES = 150;
+
+    function deactivateCustomCursor(clearExistingParticles) {
+      isRouteActive = false;
+      isVisible = false;
+      isPointerDown = false;
+      isInteractive = false;
+      window.clearTimeout(moveClearTimer);
+      window.clearTimeout(stubTimer);
+      window.clearTimeout(snuffTimer);
+      document.documentElement.classList.remove("has-halo-cursor");
+      document.body.classList.remove("has-halo-cursor");
+      cursorEl.classList.remove("is-visible", "is-moving", "is-stubbing", "is-snuffed", "is-interactive");
+      if (clearExistingParticles) {
+        particles.length = 0;
+        ctx.clearRect(0, 0, vw, vh);
+      }
+    }
+
+    syncHaloCursorForRoute = (route) => {
+      window.clearTimeout(routeDisableTimer);
+      if (route === "/") {
+        isRouteActive = true;
+        document.documentElement.classList.add("has-halo-cursor");
+        document.body.classList.add("has-halo-cursor");
+        if (hasPointerPos) {
+          cursorEl.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+          isVisible = true;
+          lastEmitX = cx;
+          lastEmitY = cy;
+          cursorEl.classList.add("is-visible");
+          const el = document.elementFromPoint(cx, cy);
+          if (el) updateCursorState(el);
+          ensureLoop();
+        }
+      } else if (state.isBurning) {
+        // Let the cigarette stub-out ignition frame finish cleanly (~240ms), then restore standard OS cursor
+        routeDisableTimer = window.setTimeout(() => {
+          if (state.route !== "/") {
+            deactivateCustomCursor(false);
+          }
+        }, 240);
+      } else {
+        deactivateCustomCursor(true);
+      }
+    };
 
     function addParticle(p) {
       if (particles.length >= MAX_PARTICLES) particles.shift();
@@ -1533,7 +1599,7 @@
       const dt = Math.max(0, Math.min(Number.isFinite(rawDt) ? rawDt : 16.67, 48));
       lastFrameTime = now;
 
-      if (isVisible && !reducedMotion && now >= snuffedUntil) {
+      if (isRouteActive && isVisible && !reducedMotion && now >= snuffedUntil) {
         const idleInterval = isInteractive ? 72 : 98;
         if (now - lastIdleEmit >= idleInterval) {
           lastIdleEmit = now;
@@ -1611,7 +1677,7 @@
         }
       }
 
-      if (particles.length > 0 || (isVisible && !reducedMotion)) {
+      if (particles.length > 0 || (isRouteActive && isVisible && !reducedMotion)) {
         rafId = window.requestAnimationFrame(tick);
       } else {
         rafId = 0;
@@ -1644,6 +1710,10 @@
         const prevY = cy;
         cx = e.clientX;
         cy = e.clientY;
+        hasPointerPos = true;
+
+        if (!isRouteActive) return;
+
         cursorEl.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
 
         if (!isVisible) {
@@ -1687,22 +1757,19 @@
     window.addEventListener(
       "scroll",
       () => {
-        if (!isVisible) return;
+        if (!isRouteActive || !isVisible) return;
         const el = document.elementFromPoint(cx, cy);
         if (el) updateCursorState(el);
       },
       { passive: true }
     );
 
-    // Prevent native image/link ghost drag cursor from interrupting our custom cursor
+    // Prevent native image/link ghost drag cursor from interrupting our custom cursor on homepage
     document.addEventListener("dragstart", (e) => {
-      if (e.target instanceof Element && e.target.closest("img, a, button")) {
+      if (isRouteActive && e.target instanceof Element && e.target.closest("img, a, button")) {
         e.preventDefault();
       }
     });
-
-    let isPointerDown = false;
-    let downTimestamp = 0;
 
     window.addEventListener(
       "pointerdown",
@@ -1710,6 +1777,9 @@
         if (e.pointerType === "touch") return;
         cx = e.clientX;
         cy = e.clientY;
+        hasPointerPos = true;
+        if (!isRouteActive) return;
+
         cursorEl.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
         if (!isVisible) {
           isVisible = true;
@@ -1763,6 +1833,9 @@
       isPointerDown = false;
       cursorEl.classList.remove("is-visible", "is-moving", "is-stubbing");
     });
+
+    // Apply initial cursor mode based on starting route (#/ -> custom cigarette cursor; inner pages -> standard OS cursor)
+    syncHaloCursorForRoute(state.route);
 
     // Expose particle bridge so the expanding homepage burn front showers embers & charred ash flakes
     emitBurnRingFx = (originX, originY, radiusPx, intensity) => {

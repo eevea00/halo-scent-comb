@@ -1779,7 +1779,7 @@ html[lang="en"] .scent-spec-desc {
   border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 16px;
 }
@@ -2687,7 +2687,7 @@ html[lang="en"] .footer-text-btn {
   }
 
   .halo-cursor {
-    display: block;
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -2699,6 +2699,10 @@ html[lang="en"] .footer-text-btn {
     transform: translate3d(-160px, -160px, 0);
     will-change: transform, opacity;
     transition: opacity 0.2s ease;
+  }
+
+  html.has-halo-cursor .halo-cursor {
+    display: block;
   }
 
   .halo-cursor.is-visible {
@@ -2987,4 +2991,183 @@ html[lang="en"] .halo-select-option {
 
 .hero-burn-canvas.is-active {
   display: block;
+}
+
+/* ==========================================================================
+   PDP Collapsible Technical Principle Plate (#/comb -> #combTechSection)
+   Collapsed by Default · Single High-Res Image on Expand · Le Labo Hairline
+   ========================================================================== */
+
+.tech-accordion {
+  margin-top: 56px;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.tech-acc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 0;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+.tech-acc-head:hover .tech-acc-action {
+  color: var(--moss);
+  border-bottom-color: var(--moss);
+}
+
+.tech-acc-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tech-acc-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.tech-acc-title {
+  font-family: var(--font-serif-cjk);
+  font-weight: 400;
+  font-size: 14.5px;
+  letter-spacing: 0.08em;
+  color: var(--moss);
+  margin: 0;
+}
+
+html[lang="en"] .tech-acc-title {
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  letter-spacing: 0.06em;
+}
+
+.tech-acc-action {
+  flex-shrink: 0;
+  font-size: 12.5px;
+}
+
+.tech-acc-body {
+  display: none;
+  padding: 4px 0 28px;
+}
+
+.tech-accordion.is-open .tech-acc-body {
+  display: block;
+  animation: pageFade 0.28s var(--ease);
+}
+
+.tech-plate-frame {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  background: #EDEAE1;
+  overflow: hidden;
+  cursor: zoom-in;
+  transition: border-color 0.25s ease, box-shadow 0.35s var(--ease);
+}
+
+.tech-plate-frame:hover {
+  border-color: var(--moss);
+  box-shadow: 0 20px 38px -22px rgba(24, 36, 28, 0.26);
+}
+
+.tech-plate-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Full-Resolution Technical Plate Lightbox */
+.tech-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  padding: 28px;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.tech-lightbox.is-open {
+  display: flex;
+  pointer-events: auto;
+  animation: pageFade 0.22s var(--ease);
+}
+
+.tech-lightbox-inner {
+  width: min(1160px, 100%);
+  max-height: calc(100vh - 56px);
+  background: var(--canvas);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 28px 64px rgba(16, 24, 19, 0.38);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tech-lightbox-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--canvas);
+}
+
+.tech-lightbox-cap {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+
+.tech-lightbox-close {
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  padding: 5px 12px;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: var(--moss);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.tech-lightbox-close:hover {
+  background: var(--moss);
+  color: #F4F8F4;
+}
+
+.tech-lightbox-img {
+  display: block;
+  width: 100%;
+  max-height: calc(100vh - 112px);
+  object-fit: contain;
+  background: #EDEAE1;
+}
+
+@media (max-width: 640px) {
+  .tech-accordion {
+    margin-top: 40px;
+  }
+
+  .tech-acc-title-wrap {
+    gap: 8px;
+  }
+
+  .tech-lightbox {
+    padding: 14px;
+  }
 }

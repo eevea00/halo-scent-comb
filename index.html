@@ -144,16 +144,6 @@
 
                   <div class="pdp-stage-wrap">
                     <div class="pdp-main-stage" id="pdpMainStage"></div>
-                    <div class="pdp-under-links">
-                      <span class="under-label" data-i18n="pdp.viewLabel">查看实物：</span>
-                      <button type="button" class="under-link is-active" id="viewMainBtn" data-i18n="pdp.viewMain">成品实拍</button>
-                      <span class="under-sep">·</span>
-                      <button type="button" class="under-link" id="viewBoxBtn" data-i18n="pdp.viewBox">随行礼盒</button>
-                      <span class="under-sep">·</span>
-                      <button type="button" class="under-link" id="viewDetailBtn" data-i18n="pdp.viewDetail">纹样细节</button>
-                      <span class="under-sep">·</span>
-                      <button type="button" class="under-link" id="viewClipBtn" data-i18n="pdp.viewClip">弹簧侧夹</button>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -253,6 +243,22 @@
                 </div>
               </div>
             </div>
+
+            <!-- Collapsible Technical Principle Plate (#/comb — Collapsed by Default, Single Image Only) -->
+            <section class="tech-accordion" id="combTechSection" aria-labelledby="techSectionTitle">
+              <div class="tech-acc-head" id="techAccHead" role="button" tabindex="0" aria-expanded="false" aria-controls="techAccBody">
+                <div class="tech-acc-title-wrap">
+                  <span class="tech-acc-eyebrow" data-i18n="tech.eyebrow">TECHNOLOGY</span>
+                  <h2 class="tech-acc-title" id="techSectionTitle" data-i18n="tech.title">摩擦激活微胶囊净味原理</h2>
+                </div>
+                <span class="under-link tech-acc-action" id="techAccAction" data-i18n="tech.expandAction">展开原理图解</span>
+              </div>
+              <div class="tech-acc-body" id="techAccBody">
+                <button type="button" class="tech-plate-frame" id="techPlateTrigger" aria-label="Zoom technical principle diagram">
+                  <img src="./assets/tech-principle.jpg" alt="HALO Friction-Activated Microcapsules Technical Principle" loading="lazy" />
+                </button>
+              </div>
+            </section>
           </div>
         </div>
       </div>
@@ -409,7 +415,6 @@
         <div class="footer-col">
           <h4 data-i18n="footer.colCare">客户服务</h4>
           <ul>
-            <li><a href="#/comb" id="footerSafetyLink" data-i18n="pdp.accSafetyTitle">成分透明与保养</a></li>
             <li><a href="#/popup" data-route="/popup" data-i18n="nav.popup">深圳快闪</a></li>
             <li><button type="button" class="footer-text-btn" id="footerRsvpLink" data-i18n="popup.rsvpLink">预约深圳试香</button></li>
           </ul>
@@ -551,6 +556,17 @@
         </div>
         <button type="submit" class="pdp-cta" data-i18n="rsvp.submitBtn">确认预约</button>
       </form>
+    </div>
+  </div>
+
+  <!-- Full-Resolution Technical Principle Plate Lightbox -->
+  <div class="tech-lightbox" id="techLightbox" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="tech-lightbox-inner">
+      <div class="tech-lightbox-bar">
+        <span class="tech-lightbox-cap" data-i18n="tech.plateCaption">FIG. 01 · HALO 双区摩擦缓释结构与使用示意完整图板</span>
+        <button type="button" class="tech-lightbox-close" id="closeTechLightboxBtn" data-i18n="tech.closeZoom">关闭预览</button>
+      </div>
+      <img class="tech-lightbox-img" src="./assets/tech-principle.jpg" alt="HALO Friction-Activated Microcapsules Technical Board" />
     </div>
   </div>
 

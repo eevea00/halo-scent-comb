@@ -221,6 +221,14 @@ window.HALO_I18N = {
       customizeBtn: "以此香调定制 HALO",
       backToAll: "← 返回全部香调"
     },
+    tech: {
+      eyebrow: "TECHNOLOGY",
+      title: "摩擦激活微胶囊净味原理",
+      expandAction: "展开原理图解",
+      collapseAction: "收起",
+      plateCaption: "HALO · 摩擦激活微胶囊技术原理",
+      closeZoom: "关闭预览"
+    },
     manifesto: {
       title: "MANIFESTO",
       cta: "探索并定制 HALO",
@@ -543,6 +551,14 @@ window.HALO_I18N = {
       rowOccasion: "Best Moments",
       customizeBtn: "CUSTOMIZE HALO WITH THIS SCENT",
       backToAll: "← All botanical blends"
+    },
+    tech: {
+      eyebrow: "TECHNOLOGY",
+      title: "Friction-Activated Microcapsules",
+      expandAction: "Expand diagram",
+      collapseAction: "Collapse",
+      plateCaption: "HALO · Friction-Activated Microcapsules",
+      closeZoom: "Close"
     },
     manifesto: {
       title: "MANIFESTO",
@@ -867,6 +883,14 @@ window.HALO_I18N = {
       customizeBtn: "この香調で HALO をカスタム",
       backToAll: "← 4つの香調一覧へ戻る"
     },
+    tech: {
+      eyebrow: "TECHNOLOGY",
+      title: "摩擦活性マイクロカプセル技術",
+      expandAction: "図解を開く",
+      collapseAction: "閉じる",
+      plateCaption: "HALO · 摩擦活性マイクロカプセル技術",
+      closeZoom: "閉じる"
+    },
     manifesto: {
       title: "MANIFESTO",
       cta: "HALO をカスタムする",
@@ -1189,6 +1213,14 @@ window.HALO_I18N = {
       rowOccasion: "추천 순간",
       customizeBtn: "이 향조로 HALO 커스텀하기",
       backToAll: "← 전체 보태니컬 향조로 돌아가기"
+    },
+    tech: {
+      eyebrow: "TECHNOLOGY",
+      title: "마찰 활성 마이크로캡슐 원리",
+      expandAction: "원리 도판 펼치기",
+      collapseAction: "접기",
+      plateCaption: "HALO · 마찰 활성 마이크로캡슐 원리",
+      closeZoom: "닫기"
     },
     manifesto: {
       title: "MANIFESTO",
